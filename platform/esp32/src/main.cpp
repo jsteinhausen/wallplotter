@@ -23,8 +23,7 @@
 #include "Arduino.h"
 
 // These constants won't change. They're used to give names to the pins used:
-const int analogInPin = 12;  // Analog input pin that the potentiometer is attached to
-
+const int QRE113_Pin1 = 12;  // Analog input pin that the potentiometer is attached to
 
 int sensorValue = 0;        // value read from the pot
 int outputValue = 0;        // value output to the PWM (analog out)
@@ -33,12 +32,24 @@ void setup() {
     // initialize serial communications at 9600 bps:
     Serial.begin(9600);
 }
-
+int readQD(int QRE113_Pin){
+    //Returns value from QRE1113
+    //Lower numbers mean more refleacive
+    //More than 300 means nothing was reflected
+    pinMode(QRE113_Pin,OUTPUT);
+    digitalWrite(QRE113_Pin, HIGH);
+    delayMicroseconds(10);
+    pinMode(QRE113_Pin,INPUT);
+    long time=micros();
+    while (digitalRead(QRE113_Pin)==HIGH && micros()-time < 3000);
+    int diff=micros()-time;
+    return diff;
+}
 void loop() {
     // read the analog in value:
-    sensorValue = analogRead(analogInPin);
+    sensorValue = readQD(QRE113_Pin1);
     // map it to the range of the analog out:
-    outputValue = map(sensorValue, 0, 4095, 0, 255);
+    outputValue = map(sensorValue, 0, 2999, 0, 255);
 
     // print the results to the Serial Monitor:
     Serial.print("sensor = ");
@@ -50,4 +61,6 @@ void loop() {
     // converter to settle after the last reading:
     delay(200);
 }
+
+
 
