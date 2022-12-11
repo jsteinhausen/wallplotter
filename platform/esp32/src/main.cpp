@@ -57,6 +57,7 @@ int readQD(int QRE113_Pin){
 bool lineDetected(){
     for(int i=0;i< numberOfSensors;i++){
         int value=readQD(i);
+        Serial.println(value);
         if(value>limitValue){
             Serial.println("Line detected");
             return true;
@@ -70,7 +71,7 @@ void loop() {
     bool isLine=lineDetected();
     // wait 2 milliseconds before the next loop for the analog-to-digital
     // converter to settle after the last reading:
-    delay(20);
+    delay(100);
 }
 
 
