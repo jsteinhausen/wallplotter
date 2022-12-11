@@ -23,7 +23,10 @@
 #include "Arduino.h"
 
 // These constants won't change. They're used to give names to the pins used:
-const int QRE113_Pin1 = 12;  // Analog input pin that the potentiometer is attached to
+const int numberOfSensors=4;
+const int myPins[] = {12, 14, 27, 26};
+const int limitValue=1000;
+
 
 int sensorValue = 0;        // value read from the pot
 int outputValue = 0;        // value output to the PWM (analog out)
@@ -31,6 +34,9 @@ int outputValue = 0;        // value output to the PWM (analog out)
 void setup() {
     // initialize serial communications at 9600 bps:
     Serial.begin(9600);
+}
+int lenght(int myInts[numberOfSensors]){
+    return sizeof(myInts[numberOfSensors])/ sizeof(myInts[0]);
 }
 int readQD(int QRE113_Pin){
     //Returns value from QRE1113
@@ -43,23 +49,28 @@ int readQD(int QRE113_Pin){
     long time=micros();
     while (digitalRead(QRE113_Pin)==HIGH && micros()-time < 3000);
     int diff=micros()-time;
+    Serial.print("sensor = ");
+    Serial.println(diff);
     return diff;
+}
+
+bool lineDetected(){
+    for(int i=0;i< numberOfSensors;i++){
+        int value=readQD(i);
+        if(value>limitValue){
+            Serial.println("Line detected");
+            return true;
+            break;
+        }
+    }
+    return false;
 }
 void loop() {
     // read the analog in value:
-    sensorValue = readQD(QRE113_Pin1);
-    // map it to the range of the analog out:
-    outputValue = map(sensorValue, 0, 2999, 0, 255);
-
-    // print the results to the Serial Monitor:
-    Serial.print("sensor = ");
-    Serial.print(sensorValue);
-    Serial.print("\t output = ");
-    Serial.println(outputValue);
-
+    bool isLine=lineDetected();
     // wait 2 milliseconds before the next loop for the analog-to-digital
     // converter to settle after the last reading:
-    delay(200);
+    delay(20);
 }
 
 
