@@ -25,7 +25,7 @@
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
-const int limitValue=1000;
+const int limitValue=300;
 
 
 int sensorValue = 0;        // value read from the pot
@@ -56,7 +56,10 @@ int readQD(int QRE113_Pin){
 
 bool lineDetected(){
     for(int i=0;i< numberOfSensors;i++){
-        int value=readQD(i);
+        int value=readQD(myPins[i]);
+        Serial.print("GPIO");
+        Serial.print(myPins[i]);
+        Serial.print(": ");
         Serial.println(value);
         if(value>limitValue){
             Serial.println("Line detected");
@@ -71,7 +74,7 @@ void loop() {
     bool isLine=lineDetected();
     // wait 2 milliseconds before the next loop for the analog-to-digital
     // converter to settle after the last reading:
-    delay(100);
+    delay(200);
 }
 
 
