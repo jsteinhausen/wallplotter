@@ -25,23 +25,16 @@
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
-const int limitValue=300;
+const int differenceLineValue=100;
+
+int lastSensorValues[]={0, 0, 0, 0};;
+//0: No Line Detected;
+//1: Line Detected;
+int stateLineDetection=0;
 
 
-int sensorValue = 0;        // value read from the pot
-int outputValue = 0;        // value output to the PWM (analog out)
-
-void setup() {
-    // initialize serial communications at 9600 bps:
-    Serial.begin(9600);
-}
-int lenght(int myInts[numberOfSensors]){
-    return sizeof(myInts[numberOfSensors])/ sizeof(myInts[0]);
-}
 int readQD(int QRE113_Pin){
     //Returns value from QRE1113
-    //Lower numbers mean more refleacive
-    //More than 300 means nothing was reflected
     pinMode(QRE113_Pin,OUTPUT);
     digitalWrite(QRE113_Pin, HIGH);
     delayMicroseconds(10);
@@ -49,29 +42,55 @@ int readQD(int QRE113_Pin){
     long time=micros();
     while (digitalRead(QRE113_Pin)==HIGH && micros()-time < 3000);
     int diff=micros()-time;
-    Serial.print("sensor = ");
-    Serial.println(diff);
     return diff;
 }
 
-bool lineDetected(){
+void setup() {
+    // initialize serial communications at 9600 bps:
+    Serial.begin(9600);
+    //initialize last sensor values as a Reference
+    for(int i=0;i<numberOfSensors;i++){
+        lastSensorValues[i]= readQD(myPins[i]);
+    }
+}
+int lenght(int myInts[numberOfSensors]){
+    return sizeof(myInts[numberOfSensors])/ sizeof(myInts[0]);
+}
+
+int lineDetected(){
+    int value=0;
     for(int i=0;i< numberOfSensors;i++){
-        int value=readQD(myPins[i]);
+        value=readQD(myPins[i]);
         Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
         Serial.println(value);
-        if(value>limitValue){
-            Serial.println("Line detected");
-            return true;
+        if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
+            stateLineDetection = 1;
             break;
+        }else if((value<=(lastSensorValues[i]-differenceLineValue)&stateLineDetection==1)){
+            stateLineDetection=0;
         }
+        lastSensorValues[i]=value;
+        }
+
+    switch(stateLineDetection) {
+        case 0:
+            Serial.println("No line detected");
+            return stateLineDetection;
+            break;
+        case 1:
+            Serial.println("Line detected");
+            return stateLineDetection;
+            break;
+        default:
+            return stateLineDetection;
     }
-    return false;
-}
+    }
+
 void loop() {
     // read the analog in value:
-    bool isLine=lineDetected();
+    int isLine=lineDetected();
     // wait 2 milliseconds before the next loop for the analog-to-digital
     // converter to settle after the last reading:
     delay(200);
