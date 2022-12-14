@@ -27,6 +27,7 @@ const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
 const int differenceLineValue=100;
 
+int counter=0;
 int lastSensorValues[]={0, 0, 0, 0};;
 //0: No Line Detected;
 //1: Line Detected;
@@ -91,7 +92,6 @@ int lineDetected(){
 void loop() {
     const int testTimeMicroS=5000000;
     const int preparationTimeS=20;
-    int counter=0;
     counter++;
     Serial.print("Experiment ");
     Serial.println(counter);
@@ -130,7 +130,9 @@ void loop() {
         Serial.println(" millisecondes");
     }
     else{
-        Serial.println("No Line Detected after 10000 milliseconds");
+        Serial.print("No Line Detected after ");
+        Serial.print(testTimeMicroS);
+        Serial.println( " milliseconds");
     }
 
 }
