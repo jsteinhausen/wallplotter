@@ -131,7 +131,7 @@ void loop() {
     }
     else{
         Serial.print("No Line Detected after ");
-        Serial.print(testTimeMicroS);
+        Serial.print(testTimeMicroS/1000);
         Serial.println( " milliseconds");
     }
 
