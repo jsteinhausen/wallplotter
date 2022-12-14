@@ -61,10 +61,10 @@ int lineDetected(){
     int value=0;
     for(int i=0;i< numberOfSensors;i++){
         value=readQD(myPins[i]);
-        Serial.print("GPIO");
+        /*Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
-        Serial.println(value);
+        Serial.println(value);*/
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
             break;
@@ -76,11 +76,11 @@ int lineDetected(){
 
     switch(stateLineDetection) {
         case 0:
-            Serial.println("No line detected");
+            //Serial.println("No line detected");
             return stateLineDetection;
             break;
         case 1:
-            Serial.println("Line detected");
+            //Serial.println("Line detected");
             return stateLineDetection;
             break;
         default:
@@ -89,11 +89,50 @@ int lineDetected(){
     }
 
 void loop() {
-    // read the analog in value:
-    int isLine=lineDetected();
-    // wait 2 milliseconds before the next loop for the analog-to-digital
-    // converter to settle after the last reading:
-    delay(200);
+    const int testTimeMicroS=5000000;
+    const int preparationTimeS=20;
+    int counter=0;
+    counter++;
+    Serial.print("Experiment ");
+    Serial.println(counter);
+    if (counter%2==1){
+        Serial.println("Straight Line");
+    }
+    else{
+        Serial.println("Curved Line");
+    }
+
+    Serial.println("You have 30 Seconds to prepare for the next Test");
+    for(int i=preparationTimeS;i>=0;i--){
+        Serial.print(" ");
+        if (i%11==0) {
+            Serial.println(i);
+        }
+        else{
+
+            Serial.print(i);
+
+        }
+        //1 second delay
+        delay(1000);
+    }
+    Serial.println("Start");
+
+    long time=micros();
+    int onLine=0;
+    while( onLine==0&(micros()-time<=testTimeMicroS)){
+        onLine=lineDetected();
+    }
+    long diff=micros()-time;
+    if (onLine==1){
+        Serial.print("Line Detected after ");
+        Serial.print(diff);
+        Serial.println(" millisecondes");
+    }
+    else{
+        Serial.println("No Line Detected after 10000 milliseconds");
+    }
+
 }
 
 
