@@ -118,9 +118,7 @@ void loop() {
             Serial.println(i);
         }
         else{
-
             Serial.print(i);
-
         }
         //1 second delay
         delay(1000);
@@ -129,7 +127,8 @@ void loop() {
 
     long time=micros();
     int onLine=0;
-    while( onLine==0&(micros()-time<=testTimeMicroS)){
+    onLine=lineDetected();
+    while( (onLine==0)&(micros()-time<=testTimeMicroS)){
         onLine=lineDetected();
     }
     long diff=micros()-time;
@@ -143,7 +142,6 @@ void loop() {
         Serial.print(testTimeMicroS/1000);
         Serial.println( " milliseconds");
     }
-
 }
 
 
