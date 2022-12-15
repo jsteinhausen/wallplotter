@@ -28,7 +28,8 @@ const int myPins[] = {12, 14, 27, 26};
 const int differenceLineValue=100;
 
 int counter=0;
-int lastSensorValues[]={0, 0, 0, 0};;
+int lastSensorValues[]={0, 0, 0, 0};
+int defaultSensorValues[]={0, 0, 0, 0};
 //0: No Line Detected;
 //1: Line Detected;
 int stateLineDetection=0;
@@ -51,7 +52,7 @@ void setup() {
     Serial.begin(9600);
     //initialize last sensor values as a Reference
     for(int i=0;i<numberOfSensors;i++){
-        lastSensorValues[i]= readQD(myPins[i]);
+        defaultSensorValues[i]= readQD(myPins[i]);
     }
 }
 int lenght(int myInts[numberOfSensors]){
@@ -60,24 +61,19 @@ int lenght(int myInts[numberOfSensors]){
 
 int lineDetected(){
     int value=0;
+    int lastPin=0;
     for(int i=0;i< numberOfSensors;i++){
         value=readQD(myPins[i]);
         /*Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
         Serial.println(value);*/
+        lastPin=myPins[i];
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
-
             break;
-        }else if((stateLineDetection==1)){
-            //Debugging
-            Serial.print(myPins[i]);
-            Serial.print(": ");
-            Serial.println(value);
-            if((value<=(lastSensorValues[i]-differenceLineValue))){
+        }else if((stateLineDetection==1&value<=(lastSensorValues[i]-differenceLineValue))){
                 stateLineDetection=0;
-            }
         }
         lastSensorValues[i]=value;
         }
@@ -88,7 +84,10 @@ int lineDetected(){
             return stateLineDetection;
             break;
         case 1:
-
+            //Debugging
+            Serial.print(myPin);
+            Serial.print(": ");
+            Serial.println(value);
             //Serial.println("Line detected");
             return stateLineDetection;
             break;
@@ -110,7 +109,9 @@ void loop() {
         Serial.println("Curved Line");
     }
 
-    Serial.println("You have 30 Seconds to prepare for the next Test");
+    Serial.print("You have ");
+    Serial.print(preparationTimeS);
+    Serial.println(" Seconds to prepare for the next Test");
     for(int i=preparationTimeS;i>=0;i--){
         Serial.print(" ");
         if (i%11==0) {
@@ -134,7 +135,7 @@ void loop() {
     long diff=micros()-time;
     if (onLine==1){
         Serial.print("Line Detected after ");
-        Serial.print(diff);
+        Serial.print(diff/1000);
         Serial.println(" millisecondes");
     }
     else{
