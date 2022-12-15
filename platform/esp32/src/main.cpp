@@ -68,10 +68,7 @@ int lineDetected(){
         Serial.println(value);*/
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
-            //Debugging
-            Serial.print(myPins[i]);
-            Serial.print(": ");
-            Serial.println(value);
+
             break;
         }else if((value<=(lastSensorValues[i]-differenceLineValue)&stateLineDetection==1)){
             stateLineDetection=0;
@@ -85,6 +82,10 @@ int lineDetected(){
             return stateLineDetection;
             break;
         case 1:
+            //Debugging
+            Serial.print(myPins[i]);
+            Serial.print(": ");
+            Serial.println(value);
             //Serial.println("Line detected");
             return stateLineDetection;
             break;
