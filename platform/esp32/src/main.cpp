@@ -85,7 +85,7 @@ int lineDetected(){
             break;
         case 1:
             //Debugging
-            Serial.print(myPin);
+            Serial.print(lastPin);
             Serial.print(": ");
             Serial.println(value);
             //Serial.println("Line detected");
