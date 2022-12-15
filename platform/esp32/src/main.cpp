@@ -52,7 +52,7 @@ void setup() {
     Serial.begin(9600);
     //initialize last sensor values as a Reference
     for(int i=0;i<numberOfSensors;i++){
-        defaultSensorValues[i]= readQD(myPins[i]);
+        lastSensorValues[i]= readQD(myPins[i]);
     }
 }
 int lenght(int myInts[numberOfSensors]){
