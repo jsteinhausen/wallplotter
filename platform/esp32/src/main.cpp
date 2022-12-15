@@ -25,7 +25,7 @@
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
-const int differenceLineValue=1500;
+const int differenceLineValue=100;
 
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0};;
