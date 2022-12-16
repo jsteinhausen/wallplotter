@@ -127,7 +127,6 @@ void loop() {
 
     long time=micros();
     int onLine=0;
-    onLine=lineDetected();
     while( (onLine==0)&(micros()-time<=testTimeMicroS)){
         onLine=lineDetected();
     }
@@ -137,7 +136,7 @@ void loop() {
         Serial.print(diff/1000);
         Serial.println(" millisecondes");
     }
-    else{
+    else if(onLine==0){
         Serial.print("No Line Detected after ");
         Serial.print(testTimeMicroS/1000);
         Serial.println( " milliseconds");
