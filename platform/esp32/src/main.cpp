@@ -25,7 +25,7 @@
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
-const int differenceLineValue=100;
+const int differenceLineValue=1500;
 
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0};
@@ -126,6 +126,10 @@ void loop() {
     Serial.println("Start");
 
     long time=micros();
+    for(int i=0;i<numberOfSensors;i++){
+        defaultSensorValues[i]=lastSensorValues[i];
+    }
+    stateLineDetection=0;
     int onLine=0;
     while( (onLine==0)&(micros()-time<=testTimeMicroS)){
         onLine=lineDetected();
@@ -133,13 +137,13 @@ void loop() {
     long diff=micros()-time;
     if (onLine==1){
         Serial.print("Line Detected after ");
-        Serial.print(diff/1000);
-        Serial.println(" millisecondes");
+        Serial.print(diff);
+        Serial.println(" microsecondes");
     }
     else if(onLine==0){
         Serial.print("No Line Detected after ");
-        Serial.print(testTimeMicroS/1000);
-        Serial.println( " milliseconds");
+        Serial.print(testTimeMicroS);
+        Serial.println( " microseconds");
     }
 }
 
