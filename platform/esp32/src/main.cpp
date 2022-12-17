@@ -25,7 +25,7 @@
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=4;
 const int myPins[] = {12, 14, 27, 26};
-const int differenceLineValue=1500;
+const int differenceLineValue=100;
 
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0};
@@ -64,10 +64,10 @@ int lineDetected(){
     int lastPin=0;
     for(int i=0;i< numberOfSensors;i++){
         value=readQD(myPins[i]);
-        /*Serial.print("GPIO");
+        Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
-        Serial.println(value);*/
+        Serial.println(value);
         lastPin=myPins[i];
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
