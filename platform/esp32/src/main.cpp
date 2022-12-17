@@ -65,10 +65,10 @@ int lineDetected(){
     int lastPin=0;
     for(int i=0;i< numberOfSensors;i++){
         value=readQD(myPins[i]);
-        /*Serial.print("GPIO");
+        Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
-        Serial.println(value);*/
+        Serial.println(value);
         lastPin=myPins[i];
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
