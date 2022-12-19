@@ -23,13 +23,13 @@
 #include "Arduino.h"
 
 // These constants won't change. They're used to give names to the pins used:
-const int numberOfSensors=6;
-const int myPins[] = {12, 14, 27, 26,25,33};
+const int numberOfSensors=10;
+const int myPins[] = {12,13 ,14, 22,23,27, 26,25,32,33};
 const int differenceLineValue=100;
 
 int counter=0;
-int lastSensorValues[]={0, 0, 0, 0,0,0};
-int defaultSensorValues[]={0, 0, 0, 0,0,0};
+int lastSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
+int defaultSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
 
 //0: No Line Detected;
 //1: Line Detected;
