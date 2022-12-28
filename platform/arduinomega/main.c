@@ -1,3 +1,22 @@
+#include <TimerOne.h>  // bibliothèque pour utiliser les timers
+
+
+void setup(){
+  Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
+  Timer1.attachInterrupt(stateFunction);  // attacher la fonction maMethode à l'interruption du timer
+
+  Serial.begin(115200);// Initialiser le tact rate pour la communication UART 
+}
+void loop(){
+
+}
+
+/*
+ * stateFunction
+ * vérifie l'état du robot :
+ * dispose de 3 états moteur à l'arrêt, moteur en mouvement et message en cours de reception. 
+ * Elle est appellée toute les secondes dans la fonction principale pour afficer un état en continu 
+ */
 void stateFunction(){
     // Envoie une requête toutes les secondes pour obtenir la variable état
   Serial.println("get_state");
