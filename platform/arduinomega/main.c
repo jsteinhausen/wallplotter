@@ -1,3 +1,6 @@
+/*
+Programme principal de l'arduinomega
+*/
 #include <TimerOne.h>  // bibliothèque pour utiliser les timers
 
 

@@ -1,31 +1,27 @@
 /*
- * Blink
- * Turns on an LED on for one second,
- * then off for one second, repeatedly.
+ main 
+programme central
  */
 
-#include "Arduino.h" 
+#include <Arduino.h>
+#include <Servo.h>
 
-// Set LED_BUILTIN if it is not defined by Arduino framework
-#define LED_BUILTIN 2
-#define LED_RED   9
-#define LED_GREEN 10
-#define LED_BLUE  11
-#define SWITCH_INPUT 2
+#define LED_RED   9 //R
+#define LED_GREEN 10 //G
+#define LED_BLUE  11 //B
 
-// Déclarez une variable pour suivre l'état précédent de l'interrupteur
-int previousSwitchState = LOW;
+#define SWITCH_INPUT 2 // definir le pin d'entrée du Switch 
+
+
+int previousSwitchState = LOW; // Déclarez une variable pour suivre l'état précédent de l'interrupteur
+
+Servo monServo; //Déclaration de l'objet monServo
 
 void setup()
 {  
 // initialisation du matériel et des paramètres de la carte Arduino
 
-pinMode(LED_BUILTIN, OUTPUT); // initialize LED digital pin as an output.
-digitalWrite(LED_BUILTIN, HIGH); // turn the LED on ( HIGH is the voltage level)
-delay(1000);// wait for a second
-digitalWrite(LED_BUILTIN, LOW);// turn the LED off by making the voltage LOW
-delay(1000);// wait for a second
-
+monServo.attach(12); // connecte le servo sur le pin 12
 pinMode(SWITCH_INPUT, INPUT);// Initialisez le port en entrée pour l'état du switch
 
 // Initialise les pins de la LED RGB en sortie
