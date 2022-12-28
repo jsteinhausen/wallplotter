@@ -1,3 +1,6 @@
 void startFunction() {
   // Insérez ici le code à exécuter lorsque la fonction est démarrée
+  stateFunction();
+  tournerServo();
+
 }

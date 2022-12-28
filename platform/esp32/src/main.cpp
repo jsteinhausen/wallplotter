@@ -5,49 +5,53 @@
  */
 
 #include "Arduino.h"
+#include <TimerOne.h>  // bibliothèque pour utiliser les timers
 // Set LED_BUILTIN if it is not defined by Arduino framework
 #define LED_BUILTIN 2
+#define LED_RED   9
+#define LED_GREEN 10
+#define LED_BLUE  11
+
 // Déclarez une variable pour suivre l'état précédent de l'interrupteur
 int previousSwitchState = LOW;
 
 void setup()
-{    // turn the LED on (HIGH is the voltage level)
-// initialize LED digital pin as an output.
-    pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, HIGH);
-    // wait for a second
-    delay(1000);
-    // turn the LED off by making the voltage LOW
-    digitalWrite(LED_BUILTIN, LOW);
-    // wait for a second
-    delay(1000);
-    // Initialisez le port en entrée
-   pinMode(2, INPUT);
+{  
+// initialisation du matériel et des paramètres de la carte Arduino
+Timer1.initialize(1000);  // initialise le timer avec une période de 1000 microsecondes (1 seconde)
+Timer1.attachInterrupt(maMethode);  // attache la fonction maMethode à l'interruption du timer
+
+pinMode(LED_BUILTIN, OUTPUT); // initialize LED digital pin as an output.
+digitalWrite(LED_BUILTIN, HIGH); // turn the LED on ( HIGH is the voltage level)
+
+delay(1000);// wait for a second
+digitalWrite(LED_BUILTIN, LOW);// turn the LED off by making the voltage LOW
+delay(1000);// wait for a second
+pinMode(2, INPUT);// Initialisez le port en entrée pour l'état du switch
+
+// Initialise les pins de la LED RGB en sortie
+pinMode(LED_RED, OUTPUT);
+pinMode(LED_GREEN, OUTPUT);
+pinMode(LED_BLUE, OUTPUT);
+
+
+Serial.begin(115200);// Initialiser le tact rate pour la communication UART
+
 }
 void loop(){
-  // Lisez l'état de l'interrupteur
-  int currentSwitchState = digitalRead(2);
 
-  // Si l'état de l'interrupteur a changé depuis la dernière itération
-  if (currentSwitchState != previousSwitchState) {
-    // Si l'interrupteur est enfoncé (LOW), démarrez la fonction
-    if (currentSwitchState == LOW) {
+  int currentSwitchState = digitalRead(2); // Lire l'état de l'interrupteur
+
+  if (currentSwitchState != previousSwitchState) { // Si l'état de l'interrupteur a changé depuis la dernière itération
+    if (currentSwitchState == LOW) {  // Si l'interrupteur est enfoncé (LOW), démarrez la fonction
       startFunction();
     }
-    // Si l'interrupteur est relâché (HIGH), arrêtez la fonction
-    else if (currentSwitchState == HIGH) {
+    else if (currentSwitchState == HIGH) {// Si l'interrupteur est relâché (HIGH), arrêtez la fonction
       stopFunction();
     }
   }
 
-  // Mettez à jour l'état précédent de l'interrupteur
-  previousSwitchState = currentSwitchState;
-}
+  previousSwitchState = currentSwitchState;// Mettez à jour l'état précédent de l'interrupteur
 
-void startFunction() {
-  // Insérez ici le code à exécuter lorsque la fonction est démarrée
-}
 
-void stopFunction() {
-  // Insérez ici le code à exécuter lorsque la fonction est arrêtée
 }
