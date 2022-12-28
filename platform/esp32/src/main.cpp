@@ -4,7 +4,8 @@ programme central
  */
 
 #include <Arduino.h>
-#include <Servo.h>
+#include <Servo.h>     // bibliothèque pour utiliser les Servos 
+#include <TimerOne.h>  // bibliothèque pour utiliser les timers
 
 #define LED_RED   9 //R
 #define LED_GREEN 10 //G
@@ -28,6 +29,9 @@ pinMode(SWITCH_INPUT, INPUT);// Initialisez le port en entrée pour l'état du s
 pinMode(LED_RED, OUTPUT);
 pinMode(LED_GREEN, OUTPUT);
 pinMode(LED_BLUE, OUTPUT);
+
+  Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
+  Timer1.attachInterrupt(stateFunction);  // attacher la fonction maMethode à l'interruption du timer
 
 
 Serial.begin(115200);// Initialiser le tact rate pour la communication UART
