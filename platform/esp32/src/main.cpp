@@ -17,6 +17,7 @@ programme central
 int previousSwitchState = LOW; // Déclarez une variable pour suivre l'état précédent de l'interrupteur
 
 Servo monServo; //Déclaration de l'objet monServo
+StepperController controller; //Déclaration du controller des steppers
 
 void setup()
 {  
@@ -33,9 +34,7 @@ pinMode(LED_BLUE, OUTPUT);
   Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
   Timer1.attachInterrupt(stateFunction);  // attacher la fonction maMethode à l'interruption du timer
 
-
-Serial.begin(115200);// Initialiser le tact rate pour la communication UART
-
+StepperController controller;
 }
 void loop(){
 
@@ -44,9 +43,11 @@ void loop(){
   if (currentSwitchState != previousSwitchState) { // Si l'état de l'interrupteur a changé depuis la dernière itération
     if (currentSwitchState == LOW) {  // Si l'interrupteur est enfoncé (LOW), démarrez la fonction
       startFunction();
+      controller.enableMotors();
     }
     else if (currentSwitchState == HIGH) {// Si l'interrupteur est relâché (HIGH), arrêtez la fonction
       stopFunction();
+      controller.stopMotors();
     }
   }
 
