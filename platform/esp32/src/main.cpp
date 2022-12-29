@@ -1,6 +1,6 @@
 /*
  main 
-programme central
+programme principal
  */
 
 #include <Arduino.h>
