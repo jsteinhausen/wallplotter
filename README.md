@@ -1,6 +1,6 @@
 # wallplotter
 Software for a plotting device for big areas. 
-Feature Branche naming convention <initials>_<plattform>-<feature>
+Feature Branche naming convention: <initials>_<plattform>-<feature>
 Example: js_esp32-test
 Workflow:
   1. Individual developement in feature branches
