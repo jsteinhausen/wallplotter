@@ -4,9 +4,9 @@
  * then off for one second, repeatedly.
  */
 
-#include <SoftwareSerial.h>
-#include <Arduino.h>
 
+#include <Arduino.h>
+#include <SoftwareSerial.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
 
