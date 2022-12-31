@@ -1,28 +1,29 @@
 /*
- * Blink
+ * Blink on arduino
  * Turns on an LED on for one second,
  * then off for one second, repeatedly.
  */
 
-#include "Arduino.h"
+#include <SoftwareSerial.h>
+#include <Arduino.h>
 
-// Set LED_BUILTIN if it is not defined by Arduino framework
-#define LED_BUILTIN 2
+#define UART_ESP_TX 17
+#define UART_ESP_RX 16
+
+
+SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
+
 
 void setup()
 {
-    // initialize LED digital pin as an output.
-    pinMode(LED_BUILTIN, OUTPUT);
-}
+    uart_esp.begin(9600);
 
-void loop()
-{
-    // turn the LED on (HIGH is the voltage level)
-    digitalWrite(LED_BUILTIN, HIGH);
-    // wait for a second
-    delay(1000);
-    // turn the LED off by making the voltage LOW
-    digitalWrite(LED_BUILTIN, LOW);
-    // wait for a second
-    delay(1000);
+}
+void loop() {
+
+    //Test Uart
+    uart_esp.write("On\n");
+    delay(5000000);
+    uart_esp.write("Off\n");
+
 }
