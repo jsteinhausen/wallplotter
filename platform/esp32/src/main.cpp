@@ -22,8 +22,8 @@ void setup()
 void loop() {
 
     //Test Uart
-    uart_esp.write("On\n");
+    uart_esp.write("1");
     delay(5000000);
-    uart_esp.write("Off\n");
+    uart_esp.write("0");
 
 }

@@ -23,8 +23,8 @@ void loop() {
 
     //Test Uart
     char c = uart_esp.read();
-    if (c=="On"){
-        digitalWrite(LED_BUILTIN,HIGH)
+    if (c=='1'){
+        digitalWrite(LED_BUILTIN,HIGH);
     }
     else {
         digitalWrite(LED_BUILTIN, LOW);
