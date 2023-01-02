@@ -19,6 +19,7 @@ void setup()
 {
     uart_esp.begin(9600);
     pinMode(TEST_LED, OUTPUT);
+    digitalWrite(TEST_LED,LOW);
 
 
 }
@@ -27,7 +28,7 @@ void loop() {
     //Test Uart
     uart_esp.write("1");
     digitalWrite(TEST_LED,HIGH);
-    delay(5000000);
+    delay(1000);
     uart_esp.write("0");
     digitalWrite(TEST_LED,LOW);
 

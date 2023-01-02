@@ -13,6 +13,7 @@ SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
 
 void setup()
 {
+    Serial.begin(9600);
     //Initialize Build In LED
     pinMode(LED_BUILTIN, OUTPUT);
     //Initialize Uart interface
@@ -23,6 +24,7 @@ void loop() {
 
     //Test Uart
     char c = uart_esp.read();
+    Serial.println(c);
     if (c=='1'){
         digitalWrite(LED_BUILTIN,HIGH);
     }
