@@ -23,7 +23,7 @@ void setup()
 {  
 // initialisation du matériel et des paramètres de la carte Arduino
 
-monServo.attach(12); // connecte le servo sur le pin 12
+monServo.attach(9); // connecte le servo sur le pin 
 pinMode(SWITCH_INPUT, INPUT);// Initialisez le port en entrée pour l'état du switch
 
 // Initialise les pins de la LED RGB en sortie

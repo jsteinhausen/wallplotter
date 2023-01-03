@@ -34,7 +34,7 @@ if (Serial.available() > 0) {
     motor1.disable();
     motor2.disable();
     motor3.disable();
-    motor4.disable();
+    motor4.disable(); //pin 8 is LOW == Activ HIGH == Desactif 
     }
     else if(message == "enable"){
     //restart des steppers
