@@ -15,13 +15,13 @@ programme principal */
 int previousSwitchState = LOW; // Déclarez une variable pour suivre l'état précédent de l'interrupteur
 
 Servo monServo; //Déclaration de l'objet monServo
-StepperController controller; //Déclaration du controller des steppers
+
 
 void setup()
 {  
 // initialisation du matériel et des paramètres de la carte Arduino
 
-monServo.attach(9); // connecte le servo sur le pin 
+monServo.attach(A9); // connecte le servo sur le pin 
 pinMode(SWITCH_INPUT, INPUT);// Initialisez le port en entrée pour l'état du switch
 
 // Initialise les pins de la LED RGB en sortie
@@ -32,7 +32,7 @@ pinMode(LED_BLUE, OUTPUT);
   Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
   Timer1.attachInterrupt(stateFunction);  // attacher la fonction maMethode à l'interruption du timer
 
-StepperController controller;
+Serial.begin(115200);// Initialiser le tact rate pour la communication UART 
 }
 void loop(){
 
@@ -41,11 +41,11 @@ void loop(){
   if (currentSwitchState != previousSwitchState) { // Si l'état de l'interrupteur a changé depuis la dernière itération
     if (currentSwitchState == LOW) {  // Si l'interrupteur est enfoncé (LOW), démarrez la fonction
       startFunction();
-      controller.enableMotors();
+      enable_Motors();
     }
     else if (currentSwitchState == HIGH) {// Si l'interrupteur est relâché (HIGH), arrêtez la fonction
       stopFunction();
-      controller.stopMotors();
+      disable_Motors();
     }
   }
 
@@ -62,7 +62,9 @@ void loop(){
 
 void startFunction() {
   // Insérez ici le code à exécuter lorsque la fonction est démarrée
-  servoOn();
+  UART_return_home();
+  servoOff();
+
 }
 
 
@@ -115,7 +117,7 @@ void stateFunction(){
 
 /* */
 
-void stopMotors() {
+void disable_Motors() {
  // Envoi du message d'arrêt des moteurs pas à pas à l'Arduino Mega
   Serial.write("stop\n");
   }
@@ -123,7 +125,7 @@ void stopMotors() {
 
 /**/
 
-void enableMotors() {
+void enable_Motors() {
   // Envoi du message d'activation des moteurs pas à pas à l'Arduino Mega
   Serial.write("enable\n");
   }
@@ -133,5 +135,14 @@ void enableMotors() {
 
 void stopFunction() {
 //Insérer ici le code à executer pour arreter le robot 
-servoOff()
+servoOff();
+disable_Motors();
+}
+
+
+/* envoie un message via UART à l'Adruino Mega pour metre le robot en position initiale. Le message "return_home" activera 
+la methode du même nom dans le main de l'Arduino Mega */
+
+void UART_return_home{
+  Serial.write("return_home\n");
 }
