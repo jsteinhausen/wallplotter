@@ -9,7 +9,7 @@
 #include <SoftwareSerial.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
-#define TEST_LED 2
+#define TEST_LED 21
 
 
 SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
@@ -26,10 +26,10 @@ void setup()
 void loop() {
 
     //Test Uart
-    uart_esp.write("1");
+    uart_esp.write("on\n");
     digitalWrite(TEST_LED,HIGH);
     delay(1000);
-    uart_esp.write("0");
+    uart_esp.write("off\n");
     digitalWrite(TEST_LED,LOW);
 
 }

@@ -6,7 +6,7 @@
 
 #define UART_ESP_TX 1
 #define UART_ESP_RX 0
-
+int state=0;
 
 SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
 
@@ -23,13 +23,34 @@ void setup()
 void loop() {
 
     //Test Uart
-    char c = uart_esp.read();
-    Serial.println(c);
-    if (c=='1'){
-        digitalWrite(LED_BUILTIN,HIGH);
+    String message = uart_esp.readString();
+    //Testing state
+    if (state==0){
+        if (message=="on"){
+            state=1;
+        }
+        else if (message=="off"){
+            state=0;
+        }
     }
-    else {
-        digitalWrite(LED_BUILTIN, LOW);
+    else if (state==1){
+        if (message=="off"){
+            state=0;
+        }
+        else if(message=="on"){
+            state=1;
+        }
+    }
+
+    switch(state){
+        case 0:
+            digitalWrite(LED_BUILTIN, LOW);
+            break;
+        case 1:
+            digitalWrite(LED_BUILTIN,HIGH);
+            break;
+        default:
+            digitalWrite(LED_BUILTIN,LOW);
     }
 
 
