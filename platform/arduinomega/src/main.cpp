@@ -7,18 +7,26 @@
 #define UART_ESP_TX 1
 #define UART_ESP_RX 0
 int state=0;
-
-SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
+const char uartEndSymbol='~';
+SoftwareSerial uartEsp(UART_ESP_RX, UART_ESP_TX);
 
 String readCommandEsp(){
-    if (uart_esp.available() > 0) {
-        return uart_esp.readStringUntil('~');
+    if (uartEsp.available() > 0) {
+        String message=uartEsp.readStringUntil(uartEndSymbol);
+        return message;
         //Debug
         //Serial.println(message);
     }
     else{
         return "";
     }
+}
+void writeEsp(String message){
+    uartEsp.print(message);
+    //Signaling the end of the Message
+    uartEsp.print(uartEndSymbol);
+    //waiting for the message to be sent
+    uartEsp.flush();
 }
 void testUart(){
     //Test Uart
@@ -53,7 +61,7 @@ void setup()
     //Initialize Build In LED
     pinMode(LED_BUILTIN, OUTPUT);
     //Initialize Uart interface
-    uart_esp.begin(9600);
+    uartEsp.begin(9600);
     digitalWrite(LED_BUILTIN,HIGH);
 }
 void loop() {
