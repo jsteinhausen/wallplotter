@@ -25,11 +25,11 @@ void setup()
 void loop() {
 
     //Test Uart
-    uart_esp.print("on;");
+    uart_esp.print("on~");
     uart_esp.flush();
     digitalWrite(TEST_LED,HIGH);
     delay(1000);
-    uart_esp.print("off;");
+    uart_esp.print("off~");
     digitalWrite(TEST_LED,LOW);
     uart_esp.flush();
     delay(1000);

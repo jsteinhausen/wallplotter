@@ -11,6 +11,7 @@ int state=0;
 SoftwareSerial uart_esp(UART_ESP_RX, UART_ESP_TX);
 
 
+
 void setup()
 {
     Serial.begin(9600);
@@ -22,24 +23,21 @@ void setup()
 }
 void loop() {
 
-    //Test Uart"
+    //Test Uart
+    if (uart_esp.available() > 0) {
+        String message = uart_esp.readStringUntil('~');
+        Serial.println(message);
 
-    String message=uart_esp.readStringUntil(';');
-
-    Serial.println(message);
-    //Serial.println(";");
-    //Testing state
-    if (message=="on") {
-        state = 1;
-        digitalWrite(LED_BUILTIN, HIGH);
-    }
-    else if (message=="off"){
-        state=0;
-        digitalWrite(LED_BUILTIN, LOW);
+        //Testing state
+        if (message == "on") {
+            state = 1;
+            digitalWrite(LED_BUILTIN, HIGH);
+        } else if (message == "off") {
+            state = 0;
+            digitalWrite(LED_BUILTIN, LOW);
         }
-    else {
-        state=3;
     }
+
 
     Serial.println(state);
     switch(state){
