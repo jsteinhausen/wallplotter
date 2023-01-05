@@ -1,0 +1,4 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/platform/esp32",
+    "C_Cpp.errorSquiggles": "disabled"
+}
