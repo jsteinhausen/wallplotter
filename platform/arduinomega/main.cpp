@@ -1,19 +1,21 @@
 /*
-Programme principal de l'arduinomega
+Main program of the Arduino Mega
 */
 
-#include <TimerOne.h>
-#include <Stepper.h>
+#include <TimerOne.h> // Librairie for the Timers 
 
-  Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
-  Timer1.attachInterrupt(get_UART_com());  // attacher la fonction maMethode à l'interruption du timer
+Timer1.initialize(1000);  // initialize timer 1 with a period of 1 second
+Timer1.attachInterrupt(get_UART_com());  // attach get_UART_com to the intterupt of the Timer1
 
 
 void setup(){
 
-  Serial.begin(115200);// Initialiser le tact rate pour la communication UART 
+  // initialization of the hardware and the parameters of the Arduino board
+  Serial.begin(115200); // Initialize the tact rate for UART communication
 }
+
 void loop(){
+
   get_UART_com();
   if (Serial.available() > 0){
     String start = Serial.readString();
@@ -21,36 +23,42 @@ void loop(){
       return_home();
     }
     if(){
-      ///enter teh rest of the loop programm 
+      // Tipp the rest of the loop programm 
     }
   }
-
 }
 
 
 /*-----------------------------------------------------------Methode*------------------------------------------------*/
 
-/*stepper_Stop est une Methode qui lit les communication UART venant de l'Arduino Mega. En fonction des messages communiqués, 
-elle vérouille ou déverouille les stepper via le pin 8 (enpin). état HIGH conrrespond à l'activation des stepepr, l'état LOW à la désactivation*/
+
+
+/*stepper_Stop is a method that reads the UART communication coming from the Arduino Mega. According to the messages communicated, 
+it locks or unlocks the steppers via pin 8 (enpin). HIGH state corresponds to the activation of the steppers, LOW state to the deactivation*/
+
 void stepper_Stop(){
 
 if (Serial.available() > 0) {
-    // Lecture du string envoyé par l'ESP
+  
+    // Read the string sent by the ESP32
     String message = Serial.readString();
      if (message == "stop") {
-    // mettre en route les steppers
-    enpin = HIGH; //pin 8 is LOW == Enabel 
+    // lock the steppers
+    enpin = HIGH; //pin 8 is HIGH == Disabel 
     }
     else if(message == "enable"){
-    //arrêter les steppers 
-    enpin = LOW; // pin 8 is HIGH == Disabel
+    // unlock the steppers 
+    enpin = LOW; // pin 8 is LOW == Enabel
     }
   }
 }
 
 
-/*get_UART_com est une Méthode qui envoie une commande "get_state" sur le canal de communication UART pour obtenir l'état de la communication.
- Elle est appelée dans le void setup() toutes les secondes */
+/*get_UART_com is a Method which sends a "get_state" command on the UART communication channel to obtain the communication state.
+ It is called every second by the Timer1 */
+
 void get_UART_com(){
-  Serial.println("get_state"); //obtenir la variable état 
+
+  Serial.println("get_state"); //get the state variable
 }
+

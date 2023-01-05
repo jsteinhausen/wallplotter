@@ -2,128 +2,135 @@
 main programm */
 
 #include <Arduino.h>
-#include <Servo.h>     // librairie for Servos 
+#include <Servo.h>     // Librairie for Servos 
 #include <TimerOne.h>  // Librairie for Timers
 
-#define LED_RED   23 // set the pin and variable name for the Red status LED
-#define LED_GREEN 24 // set the pin and variable name for the Green status LED
-#define LED_BLUE  25 // set the pin and variable name for the Blue status LED
+#define LED_RED   23 // Set the pin and variable name for the Red status LED
+#define LED_GREEN 24 // Set the pin and variable name for the Green status LED
+#define LED_BLUE  25 // Set the pin and variable name for the Blue status LED
 
-#define SWITCH_INPUT_Start 26 // definir le pin d'entrée du Switch de démarrage du plotter 
-#define SWITCH_INPUT_Program 27 // définir le pin d'entrée du Switch de démarrage du programme 
+#define SWITCH_INPUT_Start 26 // Set the input pin of the plotter start switch 
+#define SWITCH_INPUT_Program 27 // Set the input pin of the program start switch 
 
-int previousSwitchStateStart = LOW; // Déclarer une variable pour suivre l'état précédent du Switch de démarrage plotter
-int previousSwitchStateProgram = LOW; // Déclarer une variable pour suivre l'état précédent du Switch démarrage programme 
-int currentSwitchStateStart; // Déclarer une variable pour suivre l'état actuel du Switch de démarrage plotter
-int currentSwitchStateProgram; // Déclarer une variable pour suivre l'état actuel du Switch démarrage programme 
+int previousSwitchStateStart = LOW; // Declare a variable to track the previous state of the plotter start switch
+int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
+int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
+int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch 
+double servo_angle = 90; // Declare a variable for the setting of the servos angle 
 
-Servo monServo; //Déclaration de l'objet monServo
+Servo monServo; // Declaration of the servomotor mounted in the pen mechanism 
 
 
-void setup()
-{  
-// initialisation du matériel et des paramètres de la carte Arduino
+void setup(){  
 
-monServo.attach(A9); // connecte le servo sur le pin 
-pinMode(SWITCH_INPUT_Start, INPUT);// Initialisez le port en entrée pour l'état du Switch de démarrage plotter
-pinMode(SWITCH_INPUT_Program, INPUT);// Initialisez le port en entrée pour l'état du Switch de démarrage programme 
+// initialization of the hardware and the parameters of the ESP32 board
+monServo.attach(A9); // connect the servo to the analog pin number 9
+pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
+pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state 
 
-// Initialise les pins de la LED RGB en sortie
+// Initialize the pins of the output RGB LED
 pinMode(LED_RED, OUTPUT);
 pinMode(LED_GREEN, OUTPUT);
 pinMode(LED_BLUE, OUTPUT);
 
-  Timer1.initialize(1000);  // initialiser le timer avec une période de 1 seconde
-  Timer1.attachInterrupt(stateFunction);  // attacher la fonction maMethode à l'interruption du timer
-  Timer2.initialize(1000);
-  Timer2.attachInterrupt(get_Switches_States)
+Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
+Timer2.initialize(1000);
+Timer1.attachInterrupt(State_Method) // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
+Timer2.attachInterrupt(get_Switches_States)
 
-Serial.begin(115200);// Initialiser le tact rate pour la communication UART 
+Serial.begin(115200); // Initialize the tact rate for UART communication
+
+
 }
+
+
 void loop(){
 
-
   if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) { 
-    // Si l'état des Switchs de démarrage plotter ou de démarrage programme ont changé depuis la dernière itération
-    if (currentSwitchStateStart == LOW) {  // Si le Switch de démarrage plotter est enfoncé (LOW)
-      if(currentSwitchStateProgram == LOW){ // Si le Switch de démarrage programme est enfoncé (LOW)
-      enable_Motors(); // déverouiller les moteurs
-      startFunction(); // Effectuer la fonction de démarrage 
+    // If the state of the plotter start or program start switches have changed since the last iteration.
+    if (currentSwitchStateStart == LOW) {  // If the plotter start switch is pressed (LOW)
+      if(currentSwitchStateProgram == LOW){ // If the program start switch is pressed (LOW)
+      enable_Motors(); // unlock the motors
+      Start_Method(); // Execute the start-up method
       }
     }
     else if (currentSwitchStateStart == HIGH || currentSwitchStateProgram == HIGH) {
-      // Si le Switch de démarrage plotter est désenfoncer (HIGH) ou que le Switch de démarrage programme est désenfoncé (HIGH)
-      disable_Motors(); //vérouiller les moteurs 
-      stopFunction(); // Effectuer la fonction de démarrage 
+      // If the plotter start switch is down (HIGH) or the program start switch is down (HIGH)
+      disable_Motors(); //llock the motors
+      stop_Method(); // Execute the stop method
 
     }
   }
-
 
 
 }
 
 /*-----------------------------------------------------------Methode*------------------------------------------------/
 
-/*get_Switches_States : est une methode appellée toutes secondes grace à Timer2 pour récuperer l'état des Switchs de démarrage programme et plotter */
+/*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
 void get_Switches_States(){
-  currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // Lire l'état du Switch de démarrage du plotter
-  currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); // Lire l'état du Switch de démarrage programme 
-  previousSwitchStateStart = currentSwitchStateStart;// Mettez à jour l'état précédent de l'interrupteur
-  previousSwitchStateProgram = currentSwitchStateProgram;// Mettez à jour l'état précédent de l'interrupteur
+
+  currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // read the state of the plotter start switch 
+  currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch 
+  previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch 
+  previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch 
 }
 
 
-/*startFunction : initialise toutes les fonctions de wallplotter et verifie l'état de celui-ci. Elle appelle donc tout les fonctions de type moteur ou sensor 
- l'état du robot sera visible via la LED RGB */
+/*Start_Method : initializes all the wallplotter functions and checks the state of the wallplotter. It calls all the functions of type motor or sensor 
+ the state of the robot will be visible via the RGB LED */
 
-void startFunction() {
-  // Insérez ici le code à exécuter lorsque la fonction est démarrée
-  UART_return_home();
-  servoOff();
+void Start_Method() {
 
+  // Insert here the code to execute when the method is started
+  Return_Home_UART();
+  Servo_Off();
 }
 
 
-/*servoOn : met en place le stylo en tournant le servo */
-void servoOn() {
-monServo.write(90); // fait tourner le servo de 90 degrés
-delay(1000); // attend 1 seconde avant de continuer
+/*Servo_On: sets up the pen by turning the servo */
+
+void Servo_On() {
+
+monServo.write(servo_angle); // rotates the servo 90 degrees
+delay(500); // wait half a second before continuing
 }
 
 
-/* servoOff : retracte le stylo en tournant le servo */
+/* Servo_Off: retracts the pen by turning the servo */
 
-void servoOff() {
-monServo.write(-90); // fait tourner le servo de 90 degrés
-delay(1000); // attend 1 seconde avant de continuer
+void Servo_Off() {
+
+monServo.write(-servo_angle); // rotates the servo - 90 degrees
+delay(500); // wait half a second before continuing
 }
 
 
-/* stateFunction : vérifie l'état du robot. Elle est appellée toute les secondes dans la fonction principale pour afficer un état en continu */
+/*State_Methodcks the state of the robot. It is called every second 
+by Timer1 to display a continuous state of the plotter thanks to the RGB LED */
 
-void stateFunction(){
-    // Envoie une requête pour obtenir la variable état
+void State_Method(){
+
+  // Send a request to get the state variable
   Serial.println("get_state");
-  // Si un message est disponible sur la ligne UART, lit-le
+  // If a message is available on the UART line, read it
   if (Serial.available()) {
     String message = Serial.write();
-
-    if (message == "stop") {
-      // Moteur à l'arrêt : allume la LED rouge
+    if (message == "stop") { //if string message is stop 
+      // Motor stopped: lights up the red LED
       digitalWrite(LED_RED, HIGH);
       digitalWrite(LED_GREEN, LOW);
       digitalWrite(LED_BLUE, LOW);
     }
-    else if (message == "enable") {
-      // Moteur en mouvement : allume la LED verte
+    else if (message == "enable") { // if string message is enable
+      // Motors are moving : lights up the green LED
       digitalWrite(LED_RED, LOW);
       digitalWrite(LED_GREEN, HIGH);
       digitalWrite(LED_BLUE, LOW);
     }
-    else if (Serial.available() > 0) {
-      // ESP32 envoie un message sur Serial
+    else if (Serial.available() > 0) { // ESP32 sends a message via UART
+      // lights up the blue LED
       digitalWrite(LED_RED, LOW);
       digitalWrite(LED_GREEN, LOW);
       digitalWrite(LED_BLUE, HIGH);
@@ -132,34 +139,37 @@ void stateFunction(){
 }
 
 
-/* */
+/* disable_Motors send a message to the Arduino Mega via the UART communication protocol to block the steppers */
 
 void disable_Motors() {
- // Envoi du message d'arrêt des moteurs pas à pas à l'Arduino Mega
-  Serial.write("stop\n");
+
+ Serial.write("stop\n"); // Sending the stepper motors stop message to the Arduino Mega
   }
 
 
-/**/
+/*enable_Motors sends a message to the Arduino Mega via the UART communication protocol to unlock the steppers */
 
 void enable_Motors() {
-  // Envoi du message d'activation des moteurs pas à pas à l'Arduino Mega
-  Serial.write("enable\n");
-  }
-
-
-/* stopFunction : éteint tout les moteurs */
-
-void stopFunction() {
-//Insérer ici le code à executer pour arreter le robot 
-servoOff();
-disable_Motors();
+  Serial.write("enable\n"); // Sending the stepper motors unlock message to the Arduino Mega
 }
 
 
-/* envoie un message via UART à l'Adruino Mega pour metre le robot en position initiale. Le message "return_home" activera 
-la methode du même nom dans le main de l'Arduino Mega */
+/* stop_Method : turns off all motors */
 
-void UART_return_home{
-  Serial.write("return_home\n");
+void stop_Method() {
+
+  //Insert here the code to execute to stop the robot 
+  Servo_Off();
+  disable_Motors();
+  currentSwitchStateProgram == HIGH;
 }
+
+
+/* Return_Home_UART sends a message via the UART communication protocol to the Adruino Mega to put the robot in the home position. The message "return_home" will activate 
+the method of the same name in the main of the Arduino Mega */
+
+void Return_Home_UART(){
+
+  Serial.write("return_home\n"); // Sending the return_home message to the Arduino Mega
+}
+
