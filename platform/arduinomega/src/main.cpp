@@ -23,7 +23,8 @@ void setup()
 void loop() {
 
     //Test Uart"
-    String message=uart_esp.readStringUntil('\r\n');
+
+    String message=uart_esp.readStringUntil(';');
 
     Serial.println(message);
     //Serial.println(";");
