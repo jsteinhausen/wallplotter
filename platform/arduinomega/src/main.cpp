@@ -18,30 +18,29 @@ void setup()
     pinMode(LED_BUILTIN, OUTPUT);
     //Initialize Uart interface
     uart_esp.begin(9600);
-    digitalWrite(LED_BUILTIN,LOW);
+    digitalWrite(LED_BUILTIN,HIGH);
 }
 void loop() {
 
-    //Test Uart
-    String message = uart_esp.readString();
+    //Test Uart"
+    String message=uart_esp.readStringUntil('\r\n');
+
+    Serial.println(message);
+    //Serial.println(";");
     //Testing state
-    if (state==0){
-        if (message=="on"){
-            state=1;
-        }
-        else if (message=="off"){
-            state=0;
-        }
+    if (message=="on") {
+        state = 1;
+        digitalWrite(LED_BUILTIN, HIGH);
     }
-    else if (state==1){
-        if (message=="off"){
-            state=0;
+    else if (message=="off"){
+        state=0;
+        digitalWrite(LED_BUILTIN, LOW);
         }
-        else if(message=="on"){
-            state=1;
-        }
+    else {
+        state=3;
     }
 
+    Serial.println(state);
     switch(state){
         case 0:
             digitalWrite(LED_BUILTIN, LOW);
