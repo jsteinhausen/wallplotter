@@ -27,23 +27,45 @@ Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 
 
+void setup(){
 
-/*-----------------------------------------------------------Methode*------------------------------------------------/
+// initialization of the hardware and the parameters of the ESP32 board
+monServo.attach(A9); // connect the servo to the analog pin number 9
+pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
+pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
+
+// Initialize the pins of the output RGB LED
+pinMode(LED_RED, OUTPUT);
+pinMode(LED_GREEN, OUTPUT);
+pinMode(LED_BLUE, OUTPUT);
+
+Timer1.initialize(500);  // initialize timer 1 and 2 with a period of 0.5 second
+Timer2.initialize(500);
+Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
+Timer2.attachInterrupt(get_Switches_States);
+
+Serial.begin(115200); // Initialize the tact rate for UART communication
+uartArduino.begin(9600);
+pinMode(TEST_LED, OUTPUT);
+}
+
+
+
+/*-----------------------------------------------------------Methodes*------------------------------------------------/
+
+
 
 /*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
 void get_Switches_States(){
 
+  noInterrupts(); // Block the interrupt to allow the copy in the variables
   currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // read the state of the plotter start switch
   currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
+  interrupts(); // restart interrupts
   previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch
   previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch
 }
-
-
-/*Start_Method : initializes all the wallplotter functions and checks the state of the wallplotter. It calls all the functions of type motor or sensor
- the state of the robot will be visible via the RGB LED */
-
 
 
 /*Servo_On: sets up the pen by turning the servo */
@@ -95,6 +117,8 @@ void State_Method(){
 }
 
 
+/**/
+
 void writeCommandArduino(String command){
     uartArduino.print(command);
     //Signaling the end of the Message
@@ -102,6 +126,9 @@ void writeCommandArduino(String command){
     //waiting for the message to be sent
     uartArduino.flush();
 }
+
+
+/**/
 
 String readArduino(){
     if (uartArduino.available() > 0) {
@@ -115,11 +142,19 @@ String readArduino(){
     }
 }
 
+
+/* disable_Motors send a message to the Arduino Mega via the UART communication protocol to block the steppers */
+
 void disable_Motors() {
+
  Serial.write("stop\n"); // Sending the stepper motors stop message to the Arduino Mega
-  }
+}
+
+
+/*testUart */
 
 void testUart(){
+
     //Test Uart
     writeCommandArduino("on");
     digitalWrite(TEST_LED,HIGH);
@@ -128,6 +163,8 @@ void testUart(){
     digitalWrite(TEST_LED,LOW);
     delay(1000);
 }
+
+
 /*enable_Motors sends a message to the Arduino Mega via the UART communication protocol to unlock the steppers */
 
 void enable_Motors() {
@@ -153,40 +190,23 @@ void Return_Home_UART(){
 
   Serial.write("return_home\n"); // Sending the return_home message to the Arduino Mega
 }
+
+
+/*Start_Method : initializes all the wallplotter functions and checks the state of the wallplotter. It calls all the functions of type motor or sensor
+ the state of the robot will be visible via the RGB LED */
+
 void Start_Method() {
+
     // Insert here the code to execute when the method is started
     Return_Home_UART();
     Servo_Off();
-}
-
-void setup(){
-
-// initialization of the hardware and the parameters of the ESP32 board
-monServo.attach(A9); // connect the servo to the analog pin number 9
-pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
-pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
-
-// Initialize the pins of the output RGB LED
-pinMode(LED_RED, OUTPUT);
-pinMode(LED_GREEN, OUTPUT);
-pinMode(LED_BLUE, OUTPUT);
-
-Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
-Timer2.initialize(1000);
-Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
-Timer2.attachInterrupt(get_Switches_States);
-
-Serial.begin(115200); // Initialize the tact rate for UART communication
-uartArduino.begin(9600);
-pinMode(TEST_LED, OUTPUT);
-
 }
 
 
 void loop(){
 
   if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
-    // If the state of the plotter start or program start switches have changed since the last iteration.
+    // If the state of the plotter or program start switches have changed since the last itteration.
     if (currentSwitchStateStart == LOW) {  // If the plotter start switch is pressed (LOW)
       if(currentSwitchStateProgram == LOW){ // If the program start switch is pressed (LOW)
       enable_Motors(); // unlock the motors
@@ -200,6 +220,4 @@ void loop(){
 
     }
   }
-
-
 }
