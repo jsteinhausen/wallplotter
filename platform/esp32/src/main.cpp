@@ -2,14 +2,12 @@
 main programm */
 
 #include <Arduino.h>
-#include <Servo.h>     // Librairie for Servos
+#include <Servo_Hardware_PWM.h>     // Librairie for Servos
 #include <TimerOne.h>  // Librairie for Timers
 #include <SoftwareSerial.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
 #define TEST_LED 21
-
-
 #define LED_RED   23 // Set the pin and variable name for the Red status LED
 #define LED_GREEN 24 // Set the pin and variable name for the Green status LED
 #define LED_BLUE  25 // Set the pin and variable name for the Blue status LED
@@ -197,7 +195,7 @@ void loop(){
     }
     else if (currentSwitchStateStart == HIGH || currentSwitchStateProgram == HIGH) {
       // If the plotter start switch is down (HIGH) or the program start switch is down (HIGH)
-      disable_Motors(); //llock the motors
+      disable_Motors(); //lock the motors
       stop_Method(); // Execute the stop method
 
     }
