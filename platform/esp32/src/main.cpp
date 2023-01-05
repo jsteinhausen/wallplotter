@@ -2,7 +2,7 @@
 main programm */
 
 #include <Arduino.h>
-#include <Servo_Hardware_PWM.h>     // Librairie for Servos
+#include <Servo.h>     // Librairie for Servos
 #include <TimerOne.h>  // Librairie for Timers
 #include <SoftwareSerial.h>
 #define UART_ESP_TX 17
@@ -44,11 +44,6 @@ void get_Switches_States(){
 /*Start_Method : initializes all the wallplotter functions and checks the state of the wallplotter. It calls all the functions of type motor or sensor
  the state of the robot will be visible via the RGB LED */
 
-void Start_Method() {
-  // Insert here the code to execute when the method is started
-  Return_Home_UART();
-  Servo_Off();
-}
 
 
 /*Servo_On: sets up the pen by turning the servo */
@@ -77,7 +72,7 @@ void State_Method(){
   Serial.println("get_state");
   // If a message is available on the UART line, read it
   if (Serial.available()) {
-    String message = Serial.write();
+    String message = Serial.readString();
     if (message == "stop") { //if string message is stop
       // Motor stopped: lights up the red LED
       digitalWrite(LED_RED, HIGH);
@@ -158,6 +153,11 @@ void Return_Home_UART(){
 
   Serial.write("return_home\n"); // Sending the return_home message to the Arduino Mega
 }
+void Start_Method() {
+    // Insert here the code to execute when the method is started
+    Return_Home_UART();
+    Servo_Off();
+}
 
 void setup(){
 
@@ -173,8 +173,8 @@ pinMode(LED_BLUE, OUTPUT);
 
 Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
 Timer2.initialize(1000);
-Timer1.attachInterrupt(State_Method) // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
-Timer2.attachInterrupt(get_Switches_States)
+Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
+Timer2.attachInterrupt(get_Switches_States);
 
 Serial.begin(115200); // Initialize the tact rate for UART communication
 uartArduino.begin(9600);
