@@ -17,8 +17,11 @@ void loop(){
   get_UART_com();
   if (Serial.available() > 0){
     String start = Serial.readString();
-    if(start = = "return_home"){
+    if(start == "return_home"){
       return_home();
+    }
+    if(){
+      ///enter teh rest of the loop programm 
     }
   }
 
