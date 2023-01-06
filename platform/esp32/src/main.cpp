@@ -210,6 +210,40 @@ pinMode(TEST_LED, OUTPUT);
 
     // Start server
     server.begin();
+    /* listen for client */
+
+    uint8_t data[30];
+    int counter=0;
+
+    WiFiClient client;
+    //Waits for client(pc) to connect
+    while (!client) {
+        test
+        client = server.available();
+        if(counter==1000) {
+            Serial.println("Waiting for client....");
+            counter=0;
+        }
+        counter++;
+        delay(1);
+    }
+    /* check client is connected */
+    while (client.connected()) {
+        if (client.available()) {
+            int len = client.read(data, 30);
+            if(len < 30){
+                data[len] = '\0';
+            }else {
+                data[30] = '\0';
+            }
+            Serial.print("client ");
+            Serial.print(clientCounter);
+            Serial.print(" sent: ");
+            Serial.println((char *)data);
+        }
+    }
+
+
 }
 
 
@@ -235,27 +269,8 @@ void loop(){
 
     }
   }*/
-    /* listen for client */
-    WiFiClient client = server.available();
-    uint8_t data[30];
-    if (client) {
-        clientCounter++;
-        Serial.println("new client");
-        /* check client is connected */
-        while (client.connected()) {
-            if (client.available()) {
-                int len = client.read(data, 30);
-                if(len < 30){
-                    data[len] = '\0';
-                }else {
-                    data[30] = '\0';
-                }
-                Serial.print("client ");
-                Serial.print(clientCounter);
-                Serial.print(" sent: ");
-                Serial.println((char *)data);
-            }
-        }
-    }
+    Serial.println("Process finished");
+    delay(1000);
+
 
 }
