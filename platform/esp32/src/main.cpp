@@ -30,7 +30,7 @@ SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 void setup(){
 
 // initialization of the hardware and the parameters of the ESP32 board
-monServo.attach(A9); // connect the servo to the analog pin number 9
+monServo.attach(2); // connect the servo to the analog pin number 9
 pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
 pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
 
@@ -51,10 +51,18 @@ pinMode(TEST_LED, OUTPUT);
 
 
 
-/*-----------------------------------------------------------Methodes*------------------------------------------------/
+/*-----------------------------------------------------------Methodes*------------------------------------------------*/
 
 
+void Test_Servo_On(){
+  monServo.write(servo_angle); // rotates the servo 90 degrees
+  delay(500); // wait half a second before continuing
+}
 
+void Test_Servo_Off(){
+monServo.write(-servo_angle); // rotates the servo - 90 degrees
+delay(500); // wait half a second before continuing
+}
 /*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
 void get_Switches_States(){
@@ -205,7 +213,11 @@ void Start_Method() {
 
 void loop(){
 
-  if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
+  Test_Servo_On();
+  delay(1000);
+  Test_Servo_Off();
+
+  /*if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
     // If the state of the plotter or program start switches have changed since the last itteration.
     if (currentSwitchStateStart == LOW) {  // If the plotter start switch is pressed (LOW)
       if(currentSwitchStateProgram == LOW){ // If the program start switch is pressed (LOW)
@@ -219,5 +231,5 @@ void loop(){
       stop_Method(); // Execute the stop method
 
     }
-  }
+  }*/
 }
