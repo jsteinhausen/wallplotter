@@ -10,15 +10,15 @@ public class ServerTest {
     }
     public void los() throws IOException {
         WallplotterServer wallplotterServer=new WallplotterServer();
-        wallplotterServer.init();
-        PrintWriter writer = new PrintWriter(wallplotterServer.getSocket().getOutputStream());
-        String antwort = sayHi();
-        writer.println(antwort);
-        writer.close();
-        System.out.println("Client: " + antwort);
+        Wallplotter wallplotter= new Wallplotter(wallplotterServer);
+        wallplotter.println(sayHi());
+        System.out.println("Client: " + sayHi());
     }
     private String sayHi(){
         return "Hello World";
+    }
+    private String ask(){
+        return "How are you?";
     }
 
 }
