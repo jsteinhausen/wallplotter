@@ -19,7 +19,7 @@ public class Wallplotter {
     public void println(String message) throws IOException {
         PrintWriter writer = new PrintWriter(this.server.getSocket().getOutputStream());
         writer.println(message);
-        writer.close();
+        writer.flush();
     }
 
     public WallplotterServer getServer() {

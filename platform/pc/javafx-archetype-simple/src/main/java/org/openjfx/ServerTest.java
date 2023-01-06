@@ -13,6 +13,8 @@ public class ServerTest {
         Wallplotter wallplotter= new Wallplotter(wallplotterServer);
         wallplotter.println(sayHi());
         System.out.println("Client: " + sayHi());
+        wallplotter.println(ask());
+        System.out.println("Client: " + ask());
     }
     private String sayHi(){
         return "Hello World";
