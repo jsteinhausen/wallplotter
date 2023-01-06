@@ -2,8 +2,7 @@
 main programm */
 
 #include <Arduino.h>
-#include <Servo.h>     // Librairie for Servos
-#include <TimerOne.h>  // Librairie for Timers
+//#include <TimerOne.h>  // Librairie for Timers
 #include <SoftwareSerial.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
@@ -21,16 +20,15 @@ int previousSwitchStateStart = LOW; // Declare a variable to track the previous 
 int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
-double servo_angle = 90; // Declare a variable for the setting of the servos angle
 
-Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 
+unsigned long previousMillis = 0;
+const long interval = 1000; // interval en milli-secondes
 
 void setup(){
 
 // initialization of the hardware and the parameters of the ESP32 board
-monServo.attach(2); // connect the servo to the analog pin number 9
 pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
 pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
 
@@ -39,14 +37,16 @@ pinMode(LED_RED, OUTPUT);
 pinMode(LED_GREEN, OUTPUT);
 pinMode(LED_BLUE, OUTPUT);
 
-Timer1.initialize(500);  // initialize timer 1 and 2 with a period of 0.5 second
-Timer2.initialize(500);
-Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
-Timer2.attachInterrupt(get_Switches_States);
+//Timer1.initialize(500);  // initialize timer 1 and 2 with a period of 0.5 second
+//Timer2.initialize(500);
+//Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
+//Timer2.attachInterrupt(get_Switches_States);
 
 Serial.begin(115200); // Initialize the tact rate for UART communication
 uartArduino.begin(9600);
 pinMode(TEST_LED, OUTPUT);
+
+ previousMillis = millis();
 }
 
 
@@ -54,44 +54,17 @@ pinMode(TEST_LED, OUTPUT);
 /*-----------------------------------------------------------Methodes*------------------------------------------------*/
 
 
-void Test_Servo_On(){
-  monServo.write(servo_angle); // rotates the servo 90 degrees
-  delay(500); // wait half a second before continuing
-}
-
-void Test_Servo_Off(){
-monServo.write(-servo_angle); // rotates the servo - 90 degrees
-delay(500); // wait half a second before continuing
-}
 /*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
 void get_Switches_States(){
 
-  noInterrupts(); // Block the interrupt to allow the copy in the variables
+  //noInterrupts(); // Block the interrupt to allow the copy in the variables
   currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // read the state of the plotter start switch
-  currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
+  //currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
   interrupts(); // restart interrupts
   previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch
   previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch
 }
-
-
-/*Servo_On: sets up the pen by turning the servo */
-
-void Servo_On() {
-monServo.write(servo_angle); // rotates the servo 90 degrees
-delay(500); // wait half a second before continuing
-}
-
-
-/* Servo_Off: retracts the pen by turning the servo */
-
-void Servo_Off() {
-
-monServo.write(-servo_angle); // rotates the servo - 90 degrees
-delay(500); // wait half a second before continuing
-}
-
 
 /*State_Methodcks the state of the robot. It is called every second
 by Timer1 to display a continuous state of the plotter thanks to the RGB LED */
@@ -185,7 +158,6 @@ void enable_Motors() {
 void stop_Method() {
 
   //Insert here the code to execute to stop the robot
-  Servo_Off();
   disable_Motors();
   currentSwitchStateProgram == HIGH;
 }
@@ -207,15 +179,23 @@ void Start_Method() {
 
     // Insert here the code to execute when the method is started
     Return_Home_UART();
-    Servo_Off();
 }
 
 
-void loop(){
+void functionToExecuteEverySecond() {
 
-  Test_Servo_On();
-  delay(1000);
-  Test_Servo_Off();
+  // Code à exécuter toutes les secondes
+  get_Switches_States():
+  State_Method();
+}
+void loop(){
+unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    // Exécuter la fonction toutes les secondes
+    functionToExecuteEverySecond();
+    previousMillis = currentMillis;
+  }
+  
 
   /*if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
     // If the state of the plotter or program start switches have changed since the last itteration.
