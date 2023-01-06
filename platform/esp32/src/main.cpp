@@ -20,6 +20,8 @@ main programm */
 const char uartEndSymbol='~';
 const char* ssid = "Otterbach 13";
 const char* password = "61621584259259194615";
+const char* ssidAP = "wallplotter";
+const char* passwordAP = "trinat2020";
 bool ledState = 0;
 int previousSwitchStateStart = LOW; // Declare a variable to track the previous state of the plotter start switch
 int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
@@ -188,15 +190,21 @@ pinMode(TEST_LED, OUTPUT);
 
     digitalWrite(TEST_LED, LOW);
 
-    // Connect to Wi-Fi
-    WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
+    // Setting Up Access Point
+    Serial.print("Setting AP (Access Point)…");
+    // Remove the password parameter, if you want the AP (Access Point) to be open , password
+    WiFi.softAP(ssidAP);
+
+    IPAddress IP = WiFi.softAPIP();
+    Serial.print("AP IP address: ");
+    Serial.println(IP);
+    /*while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.println("Connecting to WiFi..");
     }
 
     // Print ESP Local IP Address
-    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP());*/
 
 
     // Start server

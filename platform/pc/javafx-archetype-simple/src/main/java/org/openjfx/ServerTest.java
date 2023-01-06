@@ -9,7 +9,7 @@ public class ServerTest {
         new ServerTest().los();
     }
     public void los() {
-        try (Socket sock = new Socket("192.168.178.200", 8088)) {
+        try (Socket sock = new Socket("192.168.4.1", 8088)) {
             PrintWriter writer = new PrintWriter(sock.getOutputStream());
             String antwort = sayHi();
             writer.println(antwort);
