@@ -7,7 +7,7 @@ main programm */
 #include <SoftwareSerial.h>
 #include <WiFi.h>
 //#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+//#include <ESPAsyncWebServer.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
 #define TEST_LED 21
@@ -27,6 +27,7 @@ int previousSwitchStateStart = LOW; // Declare a variable to track the previous 
 int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
+int clientCounter=0;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
 
 Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
@@ -238,6 +239,7 @@ void loop(){
     WiFiClient client = server.available();
     uint8_t data[30];
     if (client) {
+        clientCounter++;
         Serial.println("new client");
         /* check client is connected */
         while (client.connected()) {
@@ -248,7 +250,9 @@ void loop(){
                 }else {
                     data[30] = '\0';
                 }
-                Serial.print("client sent: ");
+                Serial.print("client ");
+                Serial.print(clientCounter);
+                Serial.print(" sent: ");
                 Serial.println((char *)data);
             }
         }

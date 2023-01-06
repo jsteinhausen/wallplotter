@@ -8,24 +8,21 @@ public class WallplotterServer {
     private int port;
     private Socket socket;
 
-    public WallplotterServer(String host, int port) {
+    public WallplotterServer(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
+        this.socket = new Socket(this.host, this.port);
     }
 
-    public WallplotterServer() {
+    public WallplotterServer() throws IOException {
         this.host = "192.168.4.1";
         this.port = 8088;
+        this.socket = new Socket(this.host, this.port);
     }
 
-    public boolean init(){
-        try (Socket tempSock = new Socket(this.host, this.port)) {
-            this.socket=tempSock;
+    public boolean init() throws IOException {
+       this.socket = new Socket(this.host, this.port);
             return true;
-        } catch(IOException ex) {
-            ex.printStackTrace();
-            return false;
-        }
     }
 
     public String getHost() {
