@@ -213,12 +213,12 @@ pinMode(TEST_LED, OUTPUT);
     // Start server
     server.begin();
     /* listen for client */
-    //unsigned int
-    uint8_t data[30];
-    int counter=0;
+
+
 
     WiFiClient client;
     //Waits for client(pc) to connect
+    int counter=0;
     while (!client) {
         client = server.available();
         if(counter==1000) {
@@ -231,9 +231,11 @@ pinMode(TEST_LED, OUTPUT);
     /* check client is connected */
     Serial.println("Client is connected");
     int myStringCounter=0;
+    //unsigned int
+    uint8_t data[30];
     while (client.connected()) {
-        //for(int i=0;i<6;i++){
-        if (client.available()) {
+
+        while (client.available()) {
             int len = client.read(data, 30);
             if(len < 30){
                 //Add NULL at the end of each data byte
@@ -247,9 +249,11 @@ pinMode(TEST_LED, OUTPUT);
                charVTemp[j]=data[j];
             }*/
             myStrings[myStringCounter]=charVTemp;
-        //}
+            Serial.println(myStringCounter);
+            Serial.println(charVTemp);
+            myStringCounter++;
         }
-        myStringCounter;
+
     }
     for (int i = 0; i < 6; i++) {
         Serial.println(myStrings[i]);
