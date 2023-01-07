@@ -16,7 +16,7 @@ public class ServerTest {
         /*for(int i=0; i<myCommands.length;i++){
             wallplotter.println(myCommands[0]);
         }*/
-
+        wallplotter.println(sayHi());
         System.out.println("Client: " + sayHi());
         wallplotter.println(ask());
         System.out.println("Client: " + ask());

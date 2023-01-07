@@ -234,7 +234,6 @@ pinMode(TEST_LED, OUTPUT);
     //unsigned int
     uint8_t data[30];
     while (client.connected()) {
-
         while (client.available()) {
             int len = client.read(data, 30);
             if(len < 30){
@@ -243,16 +242,17 @@ pinMode(TEST_LED, OUTPUT);
             }else {
                 data[30] = '\0';
             }
+            //char vector
             char* charVTemp;
+            //data form unsigne int is convertet to char vector
             charVTemp=(char*)data;
-            /*for(int j=0;j<=len;j++){
-               charVTemp[j]=data[j];
-            }*/
+            //char vector is added to String;
             myStrings[myStringCounter]=charVTemp;
             Serial.println(myStringCounter);
-            Serial.println(charVTemp);
+            Serial.println(myStrings[myStringCounter]);
             myStringCounter++;
         }
+
 
     }
     for (int i = 0; i < 6; i++) {
