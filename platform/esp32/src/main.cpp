@@ -29,9 +29,8 @@ int currentSwitchStateStart; // Declare a variable to track the actual state of 
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 int clientCounter=0;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
-char *myStrings[] = {"\0", "\0", "\0",
-                     "\0", "\0", "\0", "\0"
-};
+char* myStrings[]={"Eins", "Zwei", "",
+                     "", "", "", ""};
 Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
@@ -230,11 +229,15 @@ pinMode(TEST_LED, OUTPUT);
     }
     /* check client is connected */
     Serial.println("Client is connected");
+    int testArray[3];
     int myStringCounter=0;
+    int innerCounter=0;
     //unsigned int
     uint8_t data[30];
+    char* receivingString[2];
     while (client.connected()) {
-        while (client.available()) {
+
+        if (client.available()) {
             int len = client.read(data, 30);
             if(len < 30){
                 //Add NULL at the end of each data byte
@@ -247,20 +250,28 @@ pinMode(TEST_LED, OUTPUT);
             //data form unsigne int is convertet to char vector
             charVTemp=(char*)data;
             //char vector is added to String;
-            myStrings[myStringCounter]=charVTemp;
+            receivingString[myStringCounter]=String(charVTemp);
+            Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
-            Serial.println(myStrings[myStringCounter]);
-            myStringCounter++;
+            Serial.print("receivingString: ");
+            Serial.println(receivingString[myStringCounter]);
+            testArray[myStringCounter]=myStringCounter;
+            Serial.print("TestArray: ");
+            Serial.println(testArray[myStringCounter]);
+            myStringCounter=myStringCounter+1;
         }
-
-
+        //Serial.println(innerCounter);
+        //innerCounter++;
+        //delay(1);
     }
-    for (int i = 0; i < 6; i++) {
-        Serial.println(myStrings[i]);
-        delay(500);
+    Serial.println("All receiving Strings: ");
+    for(int i=0;i<2;i++){
+        myStrings[i]=receivingString[i];
+        Serial.println(receivingString[i]);
     }
-
-
+    Serial.println("Client is disconnected");
+    Serial.print("TestArray: ");
+    Serial.println(testArray[0]);
 }
 
 
@@ -286,6 +297,8 @@ void loop(){
 
     }
   }*/
+    Serial.print("MyString: ");
+    Serial.println(myStrings[0]);
     Serial.println("Process finished");
     delay(1000);
 
