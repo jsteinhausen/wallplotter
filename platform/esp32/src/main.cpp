@@ -29,9 +29,9 @@ int currentSwitchStateStart; // Declare a variable to track the actual state of 
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 int clientCounter=0;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
-/*char *myStrings[] = {"", "", "",
+char *myStrings[] = {"", "", "",
                      "", "", "", ""
-};*/
+};
 Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
