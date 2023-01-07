@@ -229,12 +229,12 @@ pinMode(TEST_LED, OUTPUT);
     }
     /* check client is connected */
     Serial.println("Client is connected");
-    int testArray[3];
+    int testArray[]={0,1,2,3};
     int myStringCounter=0;
     int innerCounter=0;
     //unsigned int
     uint8_t data[30];
-    char* receivingString[2];
+    char* receivingString[]={"",""};
     while (client.connected()) {
 
         if (client.available()) {
@@ -246,11 +246,12 @@ pinMode(TEST_LED, OUTPUT);
                 data[30] = '\0';
             }
             //char vector
-            char* charVTemp;
+            //char charVTemp[len];
             //data form unsigne int is convertet to char vector
-            charVTemp=(char*)data;
+            //String str = String((char)data);
+            //str.toCharArray(receivingString[myStringCounter], len);
             //char vector is added to String;
-            receivingString[myStringCounter]=String(charVTemp);
+            receivingString[myStringCounter]= reinterpret_cast<char*>(data);;
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
             Serial.print("receivingString: ");
