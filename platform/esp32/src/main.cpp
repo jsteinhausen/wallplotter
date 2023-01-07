@@ -218,7 +218,6 @@ pinMode(TEST_LED, OUTPUT);
     WiFiClient client;
     //Waits for client(pc) to connect
     while (!client) {
-        test
         client = server.available();
         if(counter==1000) {
             Serial.println("Waiting for client....");
