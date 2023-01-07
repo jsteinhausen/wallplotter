@@ -8,6 +8,11 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        svgExtragtMetadata svgExtragtMetadata = new svgExtragtMetadata();
+        svgExtragtMetadata.main();
+        txtToArduino testToArduino = new txtToArduino();
+        testToArduino.main();
+
+        System.out.println( "finish" );
     }
 }
