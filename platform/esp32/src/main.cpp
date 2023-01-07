@@ -245,14 +245,14 @@ pinMode(TEST_LED, OUTPUT);
             /*for(int j=0;j<=len;j++){
                charVTemp[j]=data[j];
             }*/
-            //myStrings[0]=charVTemp;
+            myStrings[0]=charVTemp;
         //}
         }
     }
-    /*for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         Serial.println(myStrings[i]);
         delay(500);
-    }*/
+    }
 
 
 }
