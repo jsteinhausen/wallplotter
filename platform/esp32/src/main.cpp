@@ -233,12 +233,12 @@ pinMode(TEST_LED, OUTPUT);
     int myStringCounter=0;
     int innerCounter=0;
     //unsigned int
-    uint8_t data[30];
+    const int BUFFER_SIZE=30;
+    char data[BUFFER_SIZE];
     char* receivingString[]={"",""};
     while (client.connected()) {
-
         if (client.available()) {
-            int len = client.read(data, 30);
+            int len = client.readBytes(data,BUFFER_SIZE-1);
             if(len < 30){
                 //Add NULL at the end of each data byte
                 data[len] = '\0';
@@ -246,12 +246,10 @@ pinMode(TEST_LED, OUTPUT);
                 data[30] = '\0';
             }
             //char vector
-            //char charVTemp[len];
-            //data form unsigne int is convertet to char vector
-            //String str = String((char)data);
-            //str.toCharArray(receivingString[myStringCounter], len);
-            //char vector is added to String;
-            receivingString[myStringCounter]= reinterpret_cast<char*>(data);;
+            char* charVTemp;
+            charVTemp=data;
+
+            receivingString[myStringCounter]= charVTemp;
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
             Serial.print("receivingString: ");
