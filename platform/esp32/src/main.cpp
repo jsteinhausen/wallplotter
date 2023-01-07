@@ -238,7 +238,7 @@ pinMode(TEST_LED, OUTPUT);
     char* receivingString[]={"",""};
     while (client.connected()) {
         if (client.available()) {
-            int len = client.readBytes(data,BUFFER_SIZE-1);
+            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
             if(len < 30){
                 //Add NULL at the end of each data byte
                 data[len] = '\0';
