@@ -13,9 +13,9 @@ public class ServerTest {
     public void los() throws IOException {
         WallplotterServer wallplotterServer=new WallplotterServer();
         Wallplotter wallplotter= new Wallplotter(wallplotterServer);
-        //for(int i=0; i<myCommands.length;i++){
+        /*for(int i=0; i<myCommands.length;i++){
             wallplotter.println(myCommands[0]);
-        //}
+        }*/
 
         System.out.println("Client: " + sayHi());
         wallplotter.println(ask());

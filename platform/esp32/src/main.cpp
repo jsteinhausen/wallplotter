@@ -213,7 +213,7 @@ pinMode(TEST_LED, OUTPUT);
     // Start server
     server.begin();
     /* listen for client */
-
+    //unsigned int
     uint8_t data[30];
     int counter=0;
 
@@ -235,11 +235,12 @@ pinMode(TEST_LED, OUTPUT);
         if (client.available()) {
             int len = client.read(data, 30);
             if(len < 30){
+                //Add NULL at the end of each data byte
                 data[len] = '\0';
             }else {
                 data[30] = '\0';
             }
-            //char* charVTemp;
+            char* charVTemp;
             //charVTemp=(char*)data;
             /*for(int j=0;j<=len;j++){
                charVTemp[j]=data[j];
