@@ -230,6 +230,7 @@ pinMode(TEST_LED, OUTPUT);
     }
     /* check client is connected */
     Serial.println("Client is connected");
+    int myStringCounter=0;
     while (client.connected()) {
         //for(int i=0;i<6;i++){
         if (client.available()) {
@@ -245,9 +246,10 @@ pinMode(TEST_LED, OUTPUT);
             /*for(int j=0;j<=len;j++){
                charVTemp[j]=data[j];
             }*/
-            myStrings[0]=charVTemp;
+            myStrings[myStringCounter]=charVTemp;
         //}
         }
+        myStringCounter;
     }
     for (int i = 0; i < 6; i++) {
         Serial.println(myStrings[i]);
