@@ -8,18 +8,24 @@
 #define UART_ESP_RX 15
 int state=0;
 const char uartEndSymbol='~';
+const String CONFIRM="confirmed";
 SoftwareSerial uartEsp(UART_ESP_RX, UART_ESP_TX);
 
+void debugPrintln(String string){
+    Serial.println(string);
+}
+
 String readCommandEsp(){
-    if (uartEsp.available() > 0) {
-        String message=uartEsp.readStringUntil(uartEndSymbol);
-        return message;
-        //Debug
-        //Serial.println(message);
+    while (uartEsp.available() == 0) {
+        debugPrintln("No data in Stream");
+        delay(1);
     }
-    else{
-        return "";
-    }
+    String message=uartEsp.readStringUntil(uartEndSymbol);
+    debugPrintln(message);
+    return message;
+
+
+
 }
 void writeEsp(String message){
     uartEsp.print(message);
@@ -67,6 +73,7 @@ void setup()
 void loop() {
     //testUart();
     String command=readCommandEsp();
-    Serial.println(command);
-    writeEsp("confirmed");
+    debugPrintln(command);
+    writeEsp(CONFIRM);
+    debugPrintln(CONFIRM);
 }

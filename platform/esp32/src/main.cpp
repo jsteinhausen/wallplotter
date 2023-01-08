@@ -60,7 +60,7 @@ void setup(){
     previousMillis = millis();
 
 // Setting Up Access Point
-    Serial.print("Setting AP (Access Point)…");
+    Serial.println("Setting AP (Access Point)…");
 // Remove the password parameter, if you want the AP (Access Point) to be open , password
 /*WiFi.softAP(ssidAP);
 IPAddress IP = WiFi.softAPIP();
@@ -288,10 +288,12 @@ void loop(){
     //Handling the commands for the arduino
     for(int i;i<commandLength;i++){
         writeCommandArduino(testCommands[i]);
+        debugPrintln(testCommands[i]);
         String confirm="";
-        while(confirm=="confirmed"){
+        while(confirm!="confirmed"){
             confirm=readArduino();
         }
+        debugPrintln(confirm);
     }
 
 }
