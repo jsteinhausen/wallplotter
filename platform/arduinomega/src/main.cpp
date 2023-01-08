@@ -108,8 +108,40 @@ void testUart(){
             digitalWrite(LED_BUILTIN,LOW);
     }
 }
+void step_control(uint8_t value, uint8_t prevValue,  int counter,const int SIGNAL_PIN){
+    value = digitalRead(SIGNAL_PIN);
+    Serial.print("Current value = ");
+    Serial.println(value); // for debugging
+    Serial.print("Counter = ");
+    Serial.print(counter);
+    if(value == LOW && prevValue == HIGH) {
+        counter++;
+        prevValue = value;
+    }
+
+    else  {
+        prevValue = value;
+    }
+}
+/* //obsolete function
+void step_corr(float runSteps_a, float runSteps_c){
+
+    float stepsToRun_a = runSteps_a/g1 - min(counterXStepper,counterAStepper);
+    float stepsToRun_c = runSteps_c/g2 - min(counterYStepper, counterZStepper);
+    move_a_c(stepsToRun_a, stepsToRun_c);
+
+}*/
+void resetCounters(){
+    counterXStepper = 0;
+    counterYStepper = 0;
+    counterZStepper = 0;
+    counterAStepper = 0;
+}
 void move_a_c(float s1, float s2){
     int stepper_a_speed, stepper_c_speed; //unit steps/sec
+    float stepsToRunA, stepsToRunC;
+    int dirA = (s1 >= 0) - (s1 < 0);
+    int dirC = (s2 >= 0) - (s2 <0);
 
     // Set the current position to 0:
     stepper_a.setCurrentPosition(0);
@@ -150,11 +182,12 @@ void move_a_c(float s1, float s2){
     Serial.print("s2 = ");
     Serial.println(s2);
     */
-
-
     // Run the motor
     while((abs(stepper_a.currentPosition()) < abs((long)s1))||(abs(stepper_c.currentPosition()) < abs((long)s2)))
-    {
+    {   step_control(value_X,prevValX,counterXStepper,SIGNAL_X);
+        step_control(value_Y,prevValY,counterYStepper,SIGNAL_Y);
+        step_control(value_Z,prevValZ,counterZStepper,SIGNAL_Z);
+        step_control(value_A,prevValA,counterAStepper,SIGNAL_A);
         stepper_a.setSpeed(stepper_a_speed); //speed pos: motor a makes robot move up;
         if((abs(stepper_a.currentPosition()) < abs((long)s1))) {stepper_a.runSpeed();}
 
@@ -164,13 +197,21 @@ void move_a_c(float s1, float s2){
     steps_a += -stepper_a.currentPosition();
     steps_c += stepper_c.currentPosition();
 
-
     Serial.print("steps_a = ");
     Serial.println(steps_a);
     Serial.print("steps_c = ");
     Serial.println(steps_c);
-
-
+    if(counterXStepper<abs(int(steps_a/g1))){
+        stepsToRunA = (abs(steps_a)-counterXStepper*g1)*dirA;
+    }
+    else stepsToRunA = 0;
+    if(counterYStepper<abs(int(steps_c/g2))){
+        stepsToRunC = (abs(steps_c)-counterYStepper*g2)*dirC;
+    }
+    else stepsToRunC = 0;
+    if(stepsToRunA||stepsToRunC) move_a_c(stepsToRunA,stepsToRunC);
+    resetCounters();
+    
 }
 void pen_open_pos(){
     int servo_position; //this variable for pen driver by servo motor SG90
@@ -615,37 +656,6 @@ void return_home(){
 }
 
 
-
-
-
-void step_control(uint8_t value, uint8_t prevValue,  int counter,const int SIGNAL_PIN){
-    value = digitalRead(SIGNAL_PIN);
-    Serial.print("Current value = ");
-    Serial.println(value); // for debugging
-    Serial.print("Counter = ");
-    Serial.print(counter);
-    if(value == HIGH && prevValue == LOW) {
-        counter++;
-        prevValue = value;
-    }
-
-    else  {
-        prevValue = value;
-    }
-}
-void step_corr(float runSteps_a, float runSteps_c){
-
-    float stepsToRun_a = runSteps_a/g1 - min(counterXStepper,counterAStepper);
-    float stepsToRun_c = runSteps_c/g2 - min(counterYStepper, counterZStepper);
-    move_a_c(stepsToRun_a, stepsToRun_c);
-
-}
-void resetCounters(){
-    counterXStepper = 0;
-    counterYStepper = 0;
-    counterZStepper = 0;
-    counterAStepper = 0;
-}
 String read_until (char char_stop){
     //finds the index of a String
     int index =command.indexOf(char_stop);
@@ -670,9 +680,9 @@ void setup()
 
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(SIGNAL_X, INPUT);
-    pinMode(SIGNAL_X, INPUT);
-    pinMode(SIGNAL_X, INPUT);
-    pinMode(SIGNAL_X, INPUT);
+    pinMode(SIGNAL_Y, INPUT);
+    pinMode(SIGNAL_Z, INPUT);
+    pinMode(SIGNAL_A, INPUT);
     pinMode(enPin, OUTPUT);
     stepper_speed = 250; //unit steps/sec
     basic_speed = 250;   //unit steps/sec; note: high speed + low resolution (draw_res) will make vibration
@@ -692,8 +702,8 @@ void setup()
     g2 = g1;
     step1 = 32; //step/rev (full-step mode: 32; half-step mode: 64)
     step2 = step1;
-    r1 = 9.5; //radius of wheel mm
-    r2 = 9.5;
+    r1 = 8.5; // inner radius of rope wheel in mm (7.5) + rolled rope radius
+    r2 = 8.5;
     a = 0;
     c = 0;
 
