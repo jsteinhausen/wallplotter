@@ -33,10 +33,111 @@ char* testCommands[]={"move_pen_abs(12147.04,7806.9);", "draw_line(0,0,0,-3908.4
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
 
+void setup(){
 
+// initialization of the hardware and the parameters of the ESP32 board
+//monServo.attach(A9); // connect the servo to the analog pin number 9
+    pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
+    pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
+
+// Initialize the pins of the output RGB LED
+    pinMode(LED_RED, OUTPUT);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_BLUE, OUTPUT);
+
+//Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
+//Timer2.initialize(1000);
+//Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
+//Timer2.attachInterrupt(get_Switches_States);
+
+    Serial.begin(9600);
+// Initialize the tact rate for UART communication
+    uartArduino.begin(9600);
+
+
+    digitalWrite(LED_RED, LOW);
+
+    previousMillis = millis();
+
+// Setting Up Access Point
+    Serial.print("Setting AP (Access Point)…");
+// Remove the password parameter, if you want the AP (Access Point) to be open , password
+/*WiFi.softAP(ssidAP);
+IPAddress IP = WiFi.softAPIP();
+Serial.print("AP IP address: ");
+Serial.println(IP);*/
+
+
+// Start server
+/*server.begin();
+    // Start server
+    server.begin();
+    // listen for client
+
+
+
+    WiFiClient client;
+    //Waits for client(pc) to connect
+    int counter=0;
+    while (!client) {
+        client = server.available();
+        if(counter==1000) {
+            Serial.println("Waiting for client....");
+            counter=0;
+        }
+        counter++;
+        delay(1);
+    }
+    // check client is connected
+    Serial.println("Client is connected");
+    int testArray[]={0,1,2,3};
+    int myStringCounter=0;
+    int innerCounter=0;
+    //unsigned int
+    const int BUFFER_SIZE=30;
+    char data[BUFFER_SIZE];
+    char* receivingString[BUFFER_SIZE];
+    while (client.connected()) {
+        if (client.available()) {
+            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
+            if(len < BUFFER_SIZE){
+                //Add NULL at the end of each data byte
+                data[len] = '\0';
+            }else {
+                data[BUFFER_SIZE] = '\0';
+            }
+            //char vector
+            char* charVTemp;
+            charVTemp=data;
+
+            receivingString[myStringCounter]= charVTemp;
+            Serial.print("MyStringCounter: ");
+            Serial.println(myStringCounter);
+            Serial.print("receivingString: ");
+            Serial.println(receivingString[myStringCounter]);
+            testArray[myStringCounter]=myStringCounter;
+            Serial.print("TestArray: ");
+            Serial.println(testArray[myStringCounter]);
+            myStringCounter++;
+        }
+        Serial.println(innerCounter);
+        innerCounter++;
+        //delay(1);
+    }
+    Serial.println("All receiving Strings: ");
+    for(int i=0;i<BUFFER_SIZE;i++){
+        //myStrings[i]=receivingString[i];
+        Serial.println(receivingString[i]);
+    }
+    Serial.println("Client is disconnected");
+    Serial.print("TestArray: ");
+    Serial.println(testArray[0]);*/
+}
 
 /*-----------------------------------------------------------Methode*------------------------------------------------*/
-
+void debugPrintln(String string){
+    Serial.println(string);
+}
 
 /*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
@@ -45,7 +146,7 @@ void get_Switches_States(){
   //noInterrupts(); // Block the interrupt to allow the copy in the variables
   currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // read the state of the plotter start switch
   //currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
-  interrupts(); // restart interrupts
+  //interrupts(); // restart interrupts
   previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch
   previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch
 }
@@ -156,110 +257,9 @@ void functionToExecuteEverySecond() {
     get_Switches_States();
     State_Method();
 }
-void debugPrintln(String string){
-    Serial.println(string);
-}
-
-void setup(){
-
-// initialization of the hardware and the parameters of the ESP32 board
-//monServo.attach(A9); // connect the servo to the analog pin number 9
-pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
-pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
-
-// Initialize the pins of the output RGB LED
-pinMode(LED_RED, OUTPUT);
-pinMode(LED_GREEN, OUTPUT);
-pinMode(LED_BLUE, OUTPUT);
-
-//Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
-//Timer2.initialize(1000);
-//Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
-//Timer2.attachInterrupt(get_Switches_States);
-
-Serial.begin(9600);
-// Initialize the tact rate for UART communication
-uartArduino.begin(9600);
-
-
-digitalWrite(LED_RED, LOW);
-
-previousMillis = millis();
-
-// Setting Up Access Point
-Serial.print("Setting AP (Access Point)…");
-// Remove the password parameter, if you want the AP (Access Point) to be open , password
-/*WiFi.softAP(ssidAP);
-IPAddress IP = WiFi.softAPIP();
-Serial.print("AP IP address: ");
-Serial.println(IP);*/
-
-
-// Start server
-/*server.begin();
-    // Start server
-    server.begin();
-    // listen for client
 
 
 
-    WiFiClient client;
-    //Waits for client(pc) to connect
-    int counter=0;
-    while (!client) {
-        client = server.available();
-        if(counter==1000) {
-            Serial.println("Waiting for client....");
-            counter=0;
-        }
-        counter++;
-        delay(1);
-    }
-    // check client is connected
-    Serial.println("Client is connected");
-    int testArray[]={0,1,2,3};
-    int myStringCounter=0;
-    int innerCounter=0;
-    //unsigned int
-    const int BUFFER_SIZE=30;
-    char data[BUFFER_SIZE];
-    char* receivingString[BUFFER_SIZE];
-    while (client.connected()) {
-        if (client.available()) {
-            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
-            if(len < BUFFER_SIZE){
-                //Add NULL at the end of each data byte
-                data[len] = '\0';
-            }else {
-                data[BUFFER_SIZE] = '\0';
-            }
-            //char vector
-            char* charVTemp;
-            charVTemp=data;
-
-            receivingString[myStringCounter]= charVTemp;
-            Serial.print("MyStringCounter: ");
-            Serial.println(myStringCounter);
-            Serial.print("receivingString: ");
-            Serial.println(receivingString[myStringCounter]);
-            testArray[myStringCounter]=myStringCounter;
-            Serial.print("TestArray: ");
-            Serial.println(testArray[myStringCounter]);
-            myStringCounter++;
-        }
-        Serial.println(innerCounter);
-        innerCounter++;
-        //delay(1);
-    }
-    Serial.println("All receiving Strings: ");
-    for(int i=0;i<BUFFER_SIZE;i++){
-        //myStrings[i]=receivingString[i];
-        Serial.println(receivingString[i]);
-    }
-    Serial.println("Client is disconnected");
-    Serial.print("TestArray: ");
-    Serial.println(testArray[0]);*/
-}
 
 
 
@@ -285,9 +285,10 @@ void loop(){
     }
   }*/
     //testUart();
+    //Handling the commands for the arduino
     for(int i;i<commandLength;i++){
         writeCommandArduino(testCommands[i]);
-        String confirm=""
+        String confirm="";
         while(confirm=="confirmed"){
             confirm=readArduino();
         }
