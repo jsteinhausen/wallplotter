@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-#define UART_ESP_TX 1
-#define UART_ESP_RX 0
+#define UART_ESP_TX 14
+#define UART_ESP_RX 15
 int state=0;
 const char uartEndSymbol='~';
 SoftwareSerial uartEsp(UART_ESP_RX, UART_ESP_TX);

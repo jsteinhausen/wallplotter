@@ -7,7 +7,6 @@ main programm */
 
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
-#define TEST_LED 21
 #define LED_RED   23 // Set the pin and variable name for the Red status LED
 #define LED_GREEN 24 // Set the pin and variable name for the Green status LED
 #define LED_BLUE  25 // Set the pin and variable name for the Blue status LED
@@ -24,10 +23,10 @@ int previousSwitchStateStart = LOW; // Declare a variable to track the previous 
 int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
+int previousMillis;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
 char* myStrings[]={"Eins", "Zwei", "",
                      "", "", "", ""};
-Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
 
@@ -46,28 +45,6 @@ void get_Switches_States(){
   interrupts(); // restart interrupts
   previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch
   previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch
-}
-
-
-/*Start_Method : initializes all the wallplotter functions and checks the state of the wallplotter. It calls all the functions of type motor or sensor
- the state of the robot will be visible via the RGB LED */
-
-
-
-/*Servo_On: sets up the pen by turning the servo */
-
-void Servo_On() {
-monServo.write(servo_angle); // rotates the servo 90 degrees
-delay(500); // wait half a second before continuing
-}
-
-
-/* Servo_Off: retracts the pen by turning the servo */
-
-void Servo_Off() {
-
-monServo.write(-servo_angle); // rotates the servo - 90 degrees
-delay(500); // wait half a second before continuing
 }
 
 
@@ -116,7 +93,7 @@ String readArduino(){
         String message=uartArduino.readStringUntil(uartEndSymbol);
         return message;
         //Debug
-        //Serial.println(message);
+        Serial.println(message);
     }
     else{
         return "";
@@ -130,10 +107,10 @@ void disable_Motors() {
 void testUart(){
     //Test Uart
     writeCommandArduino("on");
-    digitalWrite(TEST_LED,HIGH);
+    digitalWrite(LED_RED,HIGH);
     delay(1000);
     writeCommandArduino("off");
-    digitalWrite(TEST_LED,LOW);
+    digitalWrite(LED_RED,LOW);
     delay(1000);
 }
 /*enable_Motors sends a message to the Arduino Mega via the UART communication protocol to unlock the steppers */
@@ -172,7 +149,7 @@ void Start_Method() {
 void functionToExecuteEverySecond() {
 
     // Code à exécuter toutes les secondes
-    get_Switches_States():
+    get_Switches_States();
     State_Method();
 }
 
@@ -193,35 +170,29 @@ pinMode(LED_BLUE, OUTPUT);
 //Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
 //Timer2.attachInterrupt(get_Switches_States);
 
-Serial.begin(115200); // Initialize the tact rate for UART communication
+Serial.begin(9600);
+// Initialize the tact rate for UART communication
 uartArduino.begin(9600);
-pinMode(TEST_LED, OUTPUT);
 
-digitalWrite(TEST_LED, LOW);
+
+digitalWrite(LED_RED, LOW);
 
 previousMillis = millis();
 
 // Setting Up Access Point
 Serial.print("Setting AP (Access Point)…");
 // Remove the password parameter, if you want the AP (Access Point) to be open , password
-WiFi.softAP(ssidAP);
+/*WiFi.softAP(ssidAP);
 IPAddress IP = WiFi.softAPIP();
 Serial.print("AP IP address: ");
-Serial.println(IP);
-/*while (WiFi.status() != WL_CONNECTED) {
-delay(1000);
-Serial.println("Connecting to WiFi..");
-}
-
-// Print ESP Local IP Address
-Serial.println(WiFi.localIP());*/
+Serial.println(IP);*/
 
 
 // Start server
-server.begin();
+/*server.begin();
     // Start server
     server.begin();
-    /* listen for client */
+    // listen for client
 
 
 
@@ -237,7 +208,7 @@ server.begin();
         counter++;
         delay(1);
     }
-    /* check client is connected */
+    // check client is connected
     Serial.println("Client is connected");
     int testArray[]={0,1,2,3};
     int myStringCounter=0;
@@ -280,7 +251,7 @@ server.begin();
     }
     Serial.println("Client is disconnected");
     Serial.print("TestArray: ");
-    Serial.println(testArray[0]);
+    Serial.println(testArray[0]);*/
 }
 
 
@@ -306,10 +277,5 @@ void loop(){
 
     }
   }*/
-    Serial.print("MyString: ");
-    Serial.println(myStrings[0]);
-    Serial.println("Process finished");
-    delay(1000);
-
-
+    testUart();
 }
