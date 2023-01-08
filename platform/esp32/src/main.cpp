@@ -9,7 +9,7 @@
 #include <SoftwareSerial.h>
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
-#define TEST_LED 21
+#define TEST_LED 19
 const char uartEndSymbol='~';
 
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
