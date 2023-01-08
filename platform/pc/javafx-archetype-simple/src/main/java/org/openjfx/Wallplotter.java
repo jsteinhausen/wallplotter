@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 public class Wallplotter {
     WallplotterServer server;
+    private char endOfMessage='~';
 
     public Wallplotter() throws IOException {
         this.server=new WallplotterServer();
@@ -18,7 +19,7 @@ public class Wallplotter {
     }
     public void println(String message) throws IOException {
         PrintWriter writer = new PrintWriter(this.server.getSocket().getOutputStream());
-        writer.println(message);
+        writer.println(message+this.endOfMessage);
         writer.flush();
     }
 
