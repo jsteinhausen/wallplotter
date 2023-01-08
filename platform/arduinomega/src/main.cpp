@@ -209,8 +209,9 @@ void move_a_c(float s1, float s2){
         stepsToRunC = (abs(steps_c)-counterYStepper*g2)*dirC;
     }
     else stepsToRunC = 0;
-    if(stepsToRunA||stepsToRunC) move_a_c(stepsToRunA,stepsToRunC);
     resetCounters();
+    if(stepsToRunA||stepsToRunC) move_a_c(stepsToRunA,stepsToRunC);
+    
     
 }
 void pen_open_pos(){
