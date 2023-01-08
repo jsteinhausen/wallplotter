@@ -235,21 +235,25 @@ pinMode(TEST_LED, OUTPUT);
     //unsigned int
     const int BUFFER_SIZE=30;
     char data[BUFFER_SIZE];
-    char* receivingString[]={"",""};
+    char* receivingString[]={"","",""};
     while (client.connected()) {
         if (client.available()) {
-            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
+            /*int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
             if(len < 30){
                 //Add NULL at the end of each data byte
                 data[len] = '\0';
             }else {
                 data[30] = '\0';
-            }
+            }*/
             //char vector
             char* charVTemp;
-            charVTemp=data;
+            //charVTemp=data;
 
-            receivingString[myStringCounter]= charVTemp;
+
+            String stringTemp=client.readStringUntil(uartEndSymbol);
+            //receivingString[myStringCounter]= charVTemp;
+            stringTemp.toCharArray(charVTemp, 30);
+            receivingString[myStringCounter]=charVTemp;
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
             Serial.print("receivingString: ");
@@ -264,7 +268,7 @@ pinMode(TEST_LED, OUTPUT);
         //delay(1);
     }
     Serial.println("All receiving Strings: ");
-    for(int i=0;i<2;i++){
+    for(int i=0;i<3;i++){
         myStrings[i]=receivingString[i];
         Serial.println(receivingString[i]);
     }

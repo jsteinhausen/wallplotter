@@ -20,6 +20,8 @@ public class ServerTest {
         System.out.println("Client: " + sayHi());
         wallplotter.println(ask());
         System.out.println("Client: " + ask());
+        wallplotter.println(askweaher());
+        System.out.println("Client: " + askweaher());
         wallplotterServer.getSocket().close();
     }
     private String sayHi(){
@@ -27,6 +29,9 @@ public class ServerTest {
     }
     private String ask(){
         return "How are you?";
+    }
+    private String askweaher(){
+        return "How is the weather today?";
     }
 
 }
