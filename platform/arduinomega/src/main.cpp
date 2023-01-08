@@ -65,5 +65,8 @@ void setup()
     digitalWrite(LED_BUILTIN,HIGH);
 }
 void loop() {
-    testUart();
+    //testUart();
+    String command=readCommandEsp();
+    Serial.println(command);
+    writeEsp("confirmed");
 }

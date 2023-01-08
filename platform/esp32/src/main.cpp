@@ -24,9 +24,12 @@ int previousSwitchStateProgram = LOW; // Declare a variable to track the previou
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 int previousMillis;
+int commandLength=7;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
 char* myStrings[]={"Eins", "Zwei", "",
                      "", "", "", ""};
+
+char* testCommands[]={"move_pen_abs(12147.04,7806.9);", "draw_line(0,0,0,-3908.4);", "draw_line(0,0,518.57,0);", "draw_line(0,0,0,1610.3);", "draw_line(0,0,2019.7,0);", "draw_line(0,0,0,-1610.3);}","endfile();"};
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
 
@@ -82,6 +85,7 @@ void State_Method(){
 
 void writeCommandArduino(String command){
     uartArduino.print(command);
+    debugPrintln(command);
     //Signaling the end of the Message
     uartArduino.print(uartEndSymbol);
     //waiting for the message to be sent
@@ -91,9 +95,9 @@ void writeCommandArduino(String command){
 String readArduino(){
     if (uartArduino.available() > 0) {
         String message=uartArduino.readStringUntil(uartEndSymbol);
-        return message;
         //Debug
-        Serial.println(message);
+        debugPrintln(message);
+        return message;
     }
     else{
         return "";
@@ -151,6 +155,9 @@ void functionToExecuteEverySecond() {
     // Code à exécuter toutes les secondes
     get_Switches_States();
     State_Method();
+}
+void debugPrintln(String string){
+    Serial.println(string);
 }
 
 void setup(){
@@ -277,5 +284,13 @@ void loop(){
 
     }
   }*/
-    testUart();
+    //testUart();
+    for(int i;i<commandLength;i++){
+        writeCommandArduino(testCommands[i]);
+        String confirm=""
+        while(confirm=="confirmed"){
+            confirm=readArduino();
+        }
+    }
+
 }
