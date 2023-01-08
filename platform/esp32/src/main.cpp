@@ -25,14 +25,16 @@ int previousSwitchStateProgram = LOW; // Declare a variable to track the previou
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
-
+char* myStrings[]={"Eins", "Zwei", "",
+                     "", "", "", ""};
 Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
 
 
 
-/*-----------------------------------------------------------Methode*------------------------------------------------/
+/*-----------------------------------------------------------Methode*------------------------------------------------*/
+
 
 /*get_Switches_States : is a method called every second by Timer2 to get the state of the program and plotter start switches */
 
@@ -177,7 +179,7 @@ void functionToExecuteEverySecond() {
 void setup(){
 
 // initialization of the hardware and the parameters of the ESP32 board
-monServo.attach(A9); // connect the servo to the analog pin number 9
+//monServo.attach(A9); // connect the servo to the analog pin number 9
 pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
 pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
 
@@ -217,7 +219,74 @@ Serial.println(WiFi.localIP());*/
 
 // Start server
 server.begin();
+    // Start server
+    server.begin();
+    /* listen for client */
+
+
+
+    WiFiClient client;
+    //Waits for client(pc) to connect
+    int counter=0;
+    while (!client) {
+        client = server.available();
+        if(counter==1000) {
+            Serial.println("Waiting for client....");
+            counter=0;
+        }
+        counter++;
+        delay(1);
+    }
+    /* check client is connected */
+    Serial.println("Client is connected");
+    int testArray[]={0,1,2,3};
+    int myStringCounter=0;
+    int innerCounter=0;
+    //unsigned int
+    const int BUFFER_SIZE=30;
+    char data[BUFFER_SIZE];
+    char* receivingString[BUFFER_SIZE];
+    while (client.connected()) {
+        if (client.available()) {
+            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
+            if(len < BUFFER_SIZE){
+                //Add NULL at the end of each data byte
+                data[len] = '\0';
+            }else {
+                data[BUFFER_SIZE] = '\0';
+            }
+            //char vector
+            char* charVTemp;
+            charVTemp=data;
+
+            receivingString[myStringCounter]= charVTemp;
+            Serial.print("MyStringCounter: ");
+            Serial.println(myStringCounter);
+            Serial.print("receivingString: ");
+            Serial.println(receivingString[myStringCounter]);
+            testArray[myStringCounter]=myStringCounter;
+            Serial.print("TestArray: ");
+            Serial.println(testArray[myStringCounter]);
+            myStringCounter++;
+        }
+        Serial.println(innerCounter);
+        innerCounter++;
+        //delay(1);
+    }
+    Serial.println("All receiving Strings: ");
+    for(int i=0;i<BUFFER_SIZE;i++){
+        //myStrings[i]=receivingString[i];
+        Serial.println(receivingString[i]);
+    }
+    Serial.println("Client is disconnected");
+    Serial.print("TestArray: ");
+    Serial.println(testArray[0]);
 }
+
+
+
+
+
 
 
 void loop(){
@@ -237,27 +306,10 @@ void loop(){
 
     }
   }*/
-    /* listen for client */
-    WiFiClient client = server.available();
-    uint8_t data[30];
-    if (client) {
-        clientCounter++;
-        Serial.println("new client");
-        /* check client is connected */
-        while (client.connected()) {
-            if (client.available()) {
-                int len = client.read(data, 30);
-                if(len < 30){
-                    data[len] = '\0';
-                }else {
-                    data[30] = '\0';
-                }
-                Serial.print("client ");
-                Serial.print(clientCounter);
-                Serial.print(" sent: ");
-                Serial.println((char *)data);
-            }
-        }
-    }
+    Serial.print("MyString: ");
+    Serial.println(myStrings[0]);
+    Serial.println("Process finished");
+    delay(1000);
+
 
 }
