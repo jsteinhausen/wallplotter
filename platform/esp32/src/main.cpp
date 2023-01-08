@@ -238,21 +238,21 @@ pinMode(TEST_LED, OUTPUT);
     char* receivingString[]={"","",""};
     while (client.connected()) {
         if (client.available()) {
-            /*int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
+            int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
             if(len < 30){
                 //Add NULL at the end of each data byte
                 data[len] = '\0';
             }else {
                 data[30] = '\0';
-            }*/
+            }
             //char vector
             char* charVTemp;
             //charVTemp=data;
 
 
-            String stringTemp=client.readStringUntil(uartEndSymbol);
+            //String stringTemp=client.readStringUntil(uartEndSymbol);
             //receivingString[myStringCounter]= charVTemp;
-            stringTemp.toCharArray(charVTemp, 30);
+            //stringTemp.toCharArray(charVTemp, 30);
             receivingString[myStringCounter]=charVTemp;
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
