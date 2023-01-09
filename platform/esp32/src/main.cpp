@@ -26,7 +26,6 @@
 const int numberOfSensors=10;
 const int myPins[] = {12,13 ,14, 22,23,27, 26,25,32,33};
 const int differenceLineValue=104;
-
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
 int defaultSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
@@ -47,14 +46,17 @@ int readQD(int QRE113_Pin){
     int diff=micros()-time;
     return diff;
 }
+void initLineDetection(){
+    for(int i=0;i<numberOfSensors;i++){
+        lastSensorValues[i]= readQD(myPins[i]);
+    }
+}
 
 void setup() {
     // initialize serial communications at 9600 bps:
     Serial.begin(9600);
     //initialize last sensor values as a Reference
-    for(int i=0;i<numberOfSensors;i++){
-        lastSensorValues[i]= readQD(myPins[i]);
-    }
+    initLineDetection();
 }
 int lenght(int myInts[numberOfSensors]){
     return sizeof(myInts[numberOfSensors])/ sizeof(myInts[0]);
@@ -103,6 +105,7 @@ void loop() {
     counter++;
     Serial.print("Experiment ");
     Serial.println(counter);
+    //Toggles between test for curved and test for line
     if (counter%2==1){
         Serial.println("Straight Line");
     }
