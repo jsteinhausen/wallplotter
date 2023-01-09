@@ -28,14 +28,12 @@ String readCommandEsp(){
     String message=uartEsp.readStringUntil(uartEndSymbol);
     debugPrintln(message);
     return message;
-
-
-
 }
 void writeEsp(String message){
     uartEsp.print(message);
     //Signaling the end of the Message
     uartEsp.print(uartEndSymbol);
+    debugPrintln(message);
     //waiting for the message to be sent
     uartEsp.flush();
 }
@@ -81,5 +79,5 @@ void loop() {
     debugPrintln(command);
     writeEsp(CONFIRM);
     debugPrintln(CONFIRM);
-    //delay(1000);
+    delay(1000);
 }

@@ -186,23 +186,26 @@ void State_Method(){
 
 void writeCommandArduino(String command){
     uartArduino.print(command);
-    debugPrintln(command);
     //Signaling the end of the Message
     uartArduino.print(uartEndSymbol);
     //waiting for the message to be sent
     uartArduino.flush();
+    debugPrintln(command);
 }
 
 String readArduino(){
-    if (uartArduino.available() > 0) {
-        String message=uartArduino.readStringUntil(uartEndSymbol);
-        //Debug
-        debugPrintln(message);
-        return message;
+    int counter=0;
+    while (uartArduino.available() == 0) {
+        if(counter==1000){
+            debugPrintln("No data in Stream");
+            counter=0;
+        }
+        delay(1);
+        counter++;
     }
-    else{
-        return "";
-    }
+    String message=uartArduino.readStringUntil(uartEndSymbol);
+    debugPrintln(message);
+    return message;
 }
 
 void disable_Motors() {
@@ -293,7 +296,7 @@ void loop(){
         while(confirm!="confirmed"){
             confirm=readArduino();
         }
-        debugPrintln(confirm);
+        //debugPrintln(confirm);
     }
 
 }
