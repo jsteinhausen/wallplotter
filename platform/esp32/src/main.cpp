@@ -2,12 +2,10 @@
 main programm */
 
 #include <Arduino.h>
-#include <Servo.h>     // Librairie for Servos
-//#include <TimerOne.h>  // Librairie for Timers
 #include <SoftwareSerial.h>
 #include <WiFi.h>
-//#include <AsyncTCP.h>
-//#include <ESPAsyncWebServer.h>
+//#include <stdio.h>
+
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
 #define TEST_LED 21
@@ -31,7 +29,6 @@ int clientCounter=0;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
 char* myStrings[]={"Eins", "Zwei", "",
                      "", "", "", ""};
-Servo monServo; // Declaration of the servomotor mounted in the pen mechanism
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
 
@@ -56,21 +53,6 @@ void get_Switches_States(){
 
 
 
-/*Servo_On: sets up the pen by turning the servo */
-
-void Servo_On() {
-monServo.write(servo_angle); // rotates the servo 90 degrees
-delay(500); // wait half a second before continuing
-}
-
-
-/* Servo_Off: retracts the pen by turning the servo */
-
-void Servo_Off() {
-
-monServo.write(-servo_angle); // rotates the servo - 90 degrees
-delay(500); // wait half a second before continuing
-}
 
 
 /*State_Methodcks the state of the robot. It is called every second
@@ -150,7 +132,6 @@ void enable_Motors() {
 void stop_Method() {
 
   //Insert here the code to execute to stop the robot
-  Servo_Off();
   disable_Motors();
   currentSwitchStateProgram == HIGH;
 }
@@ -166,7 +147,6 @@ void Return_Home_UART(){
 void Start_Method() {
     // Insert here the code to execute when the method is started
     Return_Home_UART();
-    Servo_Off();
 }
 
 void setup(){
@@ -236,6 +216,8 @@ pinMode(TEST_LED, OUTPUT);
     const int BUFFER_SIZE=30;
     char data[BUFFER_SIZE];
     char* receivingString[]={"","",""};
+
+    char receivingChar[90];
     while (client.connected()) {
         if (client.available()) {
             int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
@@ -245,32 +227,38 @@ pinMode(TEST_LED, OUTPUT);
             }else {
                 data[30] = '\0';
             }
+            strcat(receivingChar, data);
             //char vector
-            char* charVTemp;
+            //char* charVTemp;
             //charVTemp=data;
-
-
             //String stringTemp=client.readStringUntil(uartEndSymbol);
             //receivingString[myStringCounter]= charVTemp;
             //stringTemp.toCharArray(charVTemp, 30);
-            receivingString[myStringCounter]=charVTemp;
+            //receivingString[myStringCounter]=charVTemp;
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
-            Serial.print("receivingString: ");
-            Serial.println(receivingString[myStringCounter]);
-            testArray[myStringCounter]=myStringCounter;
-            Serial.print("TestArray: ");
-            Serial.println(testArray[myStringCounter]);
-            myStringCounter=myStringCounter+1;
+            Serial.print("Data: ");
+            Serial.print(data);
+            //Serial.print("receivingString: ");
+            //Serial.println(receivingString[myStringCounter]);
+            //testArray[myStringCounter]=myStringCounter;
+            //Serial.print("TestArray: ");
+            //Serial.println(testArray[myStringCounter]);
+            //myStringCounter=myStringCounter+1;
         }
         //Serial.println(innerCounter);
         //innerCounter++;
         //delay(1);
     }
     Serial.println("All receiving Strings: ");
-    for(int i=0;i<3;i++){
-        myStrings[i]=receivingString[i];
-        Serial.println(receivingString[i]);
+    for(int j=0;j<3;j++){
+        int receivingCharCounter=0;
+        while(receivingChar[receivingCharCounter] !=';'){
+            myStrings[j]= myStrings[j]+receivingChar[receivingCharCounter];
+            receivingCharCounter++;
+        }
+        receivingCharCounter++;
+        Serial.println(receivingString[j]);
     }
     Serial.println("Client is disconnected");
     Serial.print("TestArray: ");
