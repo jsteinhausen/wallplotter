@@ -5,7 +5,7 @@
 #include <SoftwareSerial.h>
 
 #define UART_ESP_TX 14
-#define UART_ESP_RX 15
+#define UART_ESP_RX 50
 int state=0;
 const char uartEndSymbol='~';
 const String CONFIRM="confirmed";
@@ -76,4 +76,5 @@ void loop() {
     debugPrintln(command);
     writeEsp(CONFIRM);
     debugPrintln(CONFIRM);
+    delay(1000);
 }
