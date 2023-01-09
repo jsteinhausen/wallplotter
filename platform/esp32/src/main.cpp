@@ -195,6 +195,7 @@ void writeCommandArduino(String command){
 
 String readArduino(){
     int counter=0;
+    String message="";
     while (uartArduino.available() == 0) {
         if(counter==1000){
             debugPrintln("No data in Stream");
@@ -203,7 +204,7 @@ String readArduino(){
         delay(1);
         counter++;
     }
-    String message=uartArduino.readStringUntil(uartEndSymbol);
+    message=uartArduino.readStringUntil(uartEndSymbol);
     debugPrintln(message);
     return message;
 }
@@ -293,6 +294,7 @@ void loop(){
         writeCommandArduino(testCommands[i]);
         debugPrintln(testCommands[i]);
         String confirm="";
+        confirm=readArduino();
         while(confirm!="confirmed"){
             confirm=readArduino();
         }

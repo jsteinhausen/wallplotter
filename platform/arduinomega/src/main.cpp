@@ -17,6 +17,7 @@ void debugPrintln(String string){
 
 String readCommandEsp(){
     int counter=0;
+    String message="";
     while (uartEsp.available() == 0) {
         if(counter==1000){
             debugPrintln("No data in Stream");
@@ -25,7 +26,7 @@ String readCommandEsp(){
         delay(1);
         counter++;
     }
-    String message=uartEsp.readStringUntil(uartEndSymbol);
+    message=uartEsp.readStringUntil(uartEndSymbol);
     debugPrintln(message);
     return message;
 }
@@ -75,9 +76,10 @@ void setup()
 }
 void loop() {
     //testUart();
-    String command=readCommandEsp();
-    debugPrintln(command);
+    String command="";
+    command=readCommandEsp();
+    //debugPrintln(command);
     writeEsp(CONFIRM);
-    debugPrintln(CONFIRM);
+    //debugPrintln(CONFIRM);
     delay(1000);
 }
