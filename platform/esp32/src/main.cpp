@@ -33,7 +33,8 @@ int defaultSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
 //0: No Line Detected;
 //1: Line Detected;
 int stateLineDetection=0;
-
+//How often was the line not be detacted
+int lineDectetionTimeout=0;
 
 int readQD(int QRE113_Pin){
     //Returns value from QRE1113
@@ -67,11 +68,14 @@ int lineDetected(){
     int lastPin=0;
     for(int i=0;i< numberOfSensors;i++){
         value=readQD(myPins[i]);
+        //debugg
         Serial.print("GPIO");
         Serial.print(myPins[i]);
         Serial.print(": ");
         Serial.println(value);
+        //?
         lastPin=myPins[i];
+        //Testing if the reflection got significantly darker
         if((value>=(lastSensorValues[i]+differenceLineValue))&stateLineDetection==0) {
             stateLineDetection = 1;
             break;
@@ -79,7 +83,7 @@ int lineDetected(){
                 stateLineDetection=0;
         }
         lastSensorValues[i]=value;
-        }
+    }
 
     switch(stateLineDetection) {
         case 0:
@@ -97,58 +101,21 @@ int lineDetected(){
         default:
             return stateLineDetection;
     }
-    }
+}
 
 void loop() {
-    const int testTimeMicroS=5000000;
-    const int preparationTimeS=20;
-    counter++;
-    Serial.print("Experiment ");
-    Serial.println(counter);
-    //Toggles between test for curved and test for line
-    if (counter%2==1){
-        Serial.println("Straight Line");
-    }
-    else{
-        Serial.println("Curved Line");
-    }
+   if(lineDetected()==0){
+       lineDetectionTimeout++;
+   }
+   else{
+       lineDetectionTimeout=0;
+   }
+   if (lineDectetionTimeout=100){
+       Serial.print("");
+   }
 
-    Serial.print("You have ");
-    Serial.print(preparationTimeS);
-    Serial.println(" Seconds to prepare for the next Test");
-    for(int i=preparationTimeS;i>=0;i--){
-        Serial.print(" ");
-        if (i%11==0) {
-            Serial.println(i);
-        }
-        else{
-            Serial.print(i);
-        }
-        //1 second delay
-        delay(1000);
-    }
-    Serial.println("Start");
 
-    long time=micros();
-    for(int i=0;i<numberOfSensors;i++){
-        defaultSensorValues[i]=lastSensorValues[i];
-    }
-    stateLineDetection=0;
-    int onLine=0;
-    while( (onLine==0)&(micros()-time<=testTimeMicroS)){
-        onLine=lineDetected();
-    }
-    long diff=micros()-time;
-    if (onLine==1){
-        Serial.print("Line Detected after ");
-        Serial.print(diff);
-        Serial.println(" microsecondes");
-    }
-    else if(onLine==0){
-        Serial.print("No Line Detected after ");
-        Serial.print(testTimeMicroS);
-        Serial.println( " microseconds");
-    }
+
 }
 
 
