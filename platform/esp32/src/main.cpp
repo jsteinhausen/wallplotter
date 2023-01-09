@@ -27,7 +27,7 @@ int currentSwitchStateStart; // Declare a variable to track the actual state of 
 int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 int clientCounter=0;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
-char* myStrings[]={"Eins", "Zwei", "",
+char* myStrings[]={"Eins", "Zwei", "Drei",
                      "", "", "", ""};
 SoftwareSerial uartArduino(UART_ESP_RX, UART_ESP_TX);
 WiFiServer server(8088);
@@ -221,12 +221,12 @@ pinMode(TEST_LED, OUTPUT);
     while (client.connected()) {
         if (client.available()) {
             int len= client.readBytesUntil(uartEndSymbol,data,BUFFER_SIZE-1);
-            if(len < 30){
+            /*if(len < 30){
                 //Add NULL at the end of each data byte
                 data[len] = '\0';
             }else {
                 data[30] = '\0';
-            }
+            }*/
             strcat(receivingChar, data);
             //char vector
             //char* charVTemp;
@@ -238,28 +238,30 @@ pinMode(TEST_LED, OUTPUT);
             Serial.print("MyStringCounter: ");
             Serial.println(myStringCounter);
             Serial.print("Data: ");
-            Serial.print(data);
+            Serial.println(data);
             //Serial.print("receivingString: ");
             //Serial.println(receivingString[myStringCounter]);
             //testArray[myStringCounter]=myStringCounter;
             //Serial.print("TestArray: ");
             //Serial.println(testArray[myStringCounter]);
-            //myStringCounter=myStringCounter+1;
+            myStringCounter=myStringCounter+1;
         }
         //Serial.println(innerCounter);
         //innerCounter++;
         //delay(1);
+
     }
     Serial.println("All receiving Strings: ");
-    for(int j=0;j<3;j++){
-        int receivingCharCounter=0;
-        while(receivingChar[receivingCharCounter] !=';'){
-            myStrings[j]= myStrings[j]+receivingChar[receivingCharCounter];
+    int receivingCharCounter=0;
+    //for(int j=0;j<3;j++){
+        while(receivingCharCounter<90){
+            Serial.println(receivingChar[receivingCharCounter]);
+            //myStrings[j]= myStrings[j]+receivingChar[receivingCharCounter];
             receivingCharCounter++;
         }
         receivingCharCounter++;
-        Serial.println(receivingString[j]);
-    }
+        //Serial.println(myStrings[j]);
+    //}
     Serial.println("Client is disconnected");
     Serial.print("TestArray: ");
     Serial.println(testArray[0]);
