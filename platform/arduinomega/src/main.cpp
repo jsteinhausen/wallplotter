@@ -16,10 +16,14 @@ void debugPrintln(String string){
 }
 
 String readCommandEsp(){
-
+    int counter=0;
     while (uartEsp.available() == 0) {
-        debugPrintln("No data in Stream");
+        if(counter==1000){
+            debugPrintln("No data in Stream");
+            counter=0;
+        }
         delay(1);
+        counter++;
     }
     String message=uartEsp.readStringUntil(uartEndSymbol);
     debugPrintln(message);
