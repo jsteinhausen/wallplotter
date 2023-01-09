@@ -6,7 +6,7 @@
 
 #define UART_ESP_TX 14
 #define UART_ESP_RX 50
-#define TEST_LED 2
+#define TEST_LED 48
 int state=0;
 const char uartEndSymbol='~';
 SoftwareSerial uartEsp(UART_ESP_RX, UART_ESP_TX);
