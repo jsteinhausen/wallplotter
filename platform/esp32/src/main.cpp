@@ -14,11 +14,24 @@ main programm */
 #define SWITCH_INPUT_Start 26 // Set the input pin of the plotter start switch
 #define SWITCH_INPUT_Program 27 // Set the input pin of the program start switch
 const char uartEndSymbol='~';
+const char* PEN_COMMAND= "move_pen_abs(";
+const String CONFIRM_COMMAND="confimed";
+const String EXECUTED_COMMAND="executed";
 const char* ssid = "Otterbach 13";
 const char* password = "61621584259259194615";
 const char* ssidAP = "wallplotter";
 const char* passwordAP = "trinat2020";
+
 bool ledState = 0;
+bool start=0;
+bool excecuted=0;
+bool confirmed=0;
+//State pen 0=up 1=down 2=movement
+int penState=0;
+int espState=0;
+int commandCounter=0;
+int lineDetectionTimeout=0;
+int const MAX_TIMEOUT=100;
 int previousSwitchStateStart = LOW; // Declare a variable to track the previous state of the plotter start switch
 int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
 int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
@@ -158,7 +171,7 @@ by Timer1 to display a continuous state of the plotter thanks to the RGB LED */
 void State_Method(){
 
   // Send a request to get the state variable
-  Serial.println("get_state");
+  Serial.println("Get_state");
   // If a message is available on the UART line, read it
   if (Serial.available()) {
     String message = Serial.readString();
@@ -258,40 +271,127 @@ void functionToExecuteEverySecond() {
     State_Method();
 }
 
-
-
-
-
-
-
-
-
-
 void loop(){
-/*
-  if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
-    // If the state of the plotter start or program start switches have changed since the last iteration.
-    if (currentSwitchStateStart == LOW) {  // If the plotter start switch is pressed (LOW)
-      if(currentSwitchStateProgram == LOW){ // If the program start switch is pressed (LOW)
-      enable_Motors(); // unlock the motors
-      Start_Method(); // Execute the start-up method
-      }
-    }
-    else if (currentSwitchStateStart == HIGH || currentSwitchStateProgram == HIGH) {
-      // If the plotter start switch is down (HIGH) or the program start switch is down (HIGH)
-      disable_Motors(); //lock the motors
-      stop_Method(); // Execute the stop method
-
-    }
-  }*/
-    //testUart();
-    //Handling the commands for the arduino
-    for(int i;i<commandLength;i++){
-        writeCommandArduino(testCommands[i]);
-        String confirm="";
-        while(confirm=="confirmed"){
-            confirm=readArduino();
+    if(espState==0){
+        if(start==1){
+            espState=1;
         }
     }
+    else if(espState==1){
+        if(start==1){
+            espState=2;
+        }
+        else{
+            espState=0;
+        }
+    }
+    else if(espState==2){
+        if(penState==2){
+            espState=1;
+        }
+        else if(penState==0){
+            espState=3;
+        }
+        else if(penState==1){
+            espState=4;
+        }
+    }
+    else if(espState==3){
+        if(excecuted==1){
+            commandCounter++;
+            espState=1;
+        }
+    }
+    else if(espState==4){
+        if(excecuted==1){
+            commandCounter++;
+            espState=1;
+        }
+        else if(lineDetectionTimeout>=MAX_TIMEOUT){
+            espState=5;
+            lineDetectionTimeout=0;
+            start=0;
+        }
+    }
+    else if(espState==5){
+        if(start==1){
+            espState=1;
+        }
+    }
+    else{
+        espState=5;
+    }
+    switch (espState) {
+        case 0:
+            digitalWrite(LED_GREEN,HIGH);
+            digitalWrite(LED_RED,LOW);
+            digitalWrite(LED_BLUE,LOW);
+            break;
+        case 1:
+            digitalWrite(LED_GREEN,HIGH);
+            digitalWrite(LED_RED,HIGH);
+            digitalWrite(LED_BLUE,LOW);
+            break;
+        case 2:
+            digitalWrite(LED_GREEN,HIGH);
+            digitalWrite(LED_RED,LOW);
+            digitalWrite(LED_BLUE,HIGH);
+            //Confirm
+            //Handling the commands for the arduino
+            writeCommandArduino(testCommands[commandCounter]);
+            //check pen
+            int search_length = strlen(PEN_COMMAND);
+            int input_length = strlen(testCommands[commandCounter]);
+            for (int i = 0; i < input_length - search_length; i++) {
+                bool match = true;
+                for (int j = 0; j < search_length && match; j++) {
+                    if (testCommands[commandCounter][i + j] != PEN_COMMAND[j]) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    penState=0;
+                }
+                else{
+                    penState=1;
+                }
+            }
+            String confirm="";
+            while(confirm==CONFIRM_COMMAND){
+                confirm=readArduino();
+            }
+            confirmed=1;
+            break;
+        case 3:
+            digitalWrite(LED_GREEN,LOW);
+            digitalWrite(LED_RED,LOW);
+            digitalWrite(LED_BLUE,HIGH);
+            String execute="";
+            while(execute==EXECUTED_COMMAND){
+                execute=readArduino();
+            }
+            break;
+        case 4:
+            digitalWrite(LED_GREEN,LOW);
+            digitalWrite(LED_RED,LOW);
+            digitalWrite(LED_BLUE,HIGH);
+            String execute1="";
+            while(execute1==EXECUTED_COMMAND){
+                execute1=readArduino();
+            }
+            break;
+        case 5:
+            digitalWrite(LED_GREEN,LOW);
+            digitalWrite(LED_RED,HIGH);
+            digitalWrite(LED_BLUE,LOW);
+            break;
+        default:
+            digitalWrite(LED_GREEN,LOW);
+            digitalWrite(LED_RED,HIGH);
+            digitalWrite(LED_BLUE,LOW);
+    }
+
+    //testUart();
+
 
 }
