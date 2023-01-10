@@ -289,12 +289,13 @@ void loop(){
   }*/
     //testUart();
     //Handling the commands for the arduino
+    bool confirmed=0;
     for(int i;i<commandLength;i++){
         writeCommandArduino(testCommands[i]);
         debugPrintln(testCommands[i]);
-        String confirm="";
-        while(confirm!="confirmed"){
-            confirm=readArduino();
+        while(!confirmed){
+            String confirm="";
+            if(readArduino()=="confirm") confirmed=1;
         }
         //debugPrintln(confirm);
     }
