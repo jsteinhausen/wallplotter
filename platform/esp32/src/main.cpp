@@ -23,7 +23,7 @@ const char* ssidAP = "wallplotter";
 const char* passwordAP = "trinat2020";
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=10;
-const int myPins[] = {12,13 ,14, 22,23,27, 26,25,32,33};
+const int myPins[] = {0,2 ,4,12,14, 15,26, 27,32,33};
 const int differenceLineValue=104;
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
@@ -34,7 +34,7 @@ int stateLineDetection=0;
 //How often was the line not be detacted
 bool ledState = 0;
 bool start=0;
-bool excecuted=0;
+bool executed=0;
 bool confirmed=0;
 //State pen 0=up 1=down 2=movement
 int penState=0;
@@ -355,6 +355,31 @@ void loop(){
         }
     }
     else if(espState==2){
+        //Confirm
+        //Handling the commands for the arduino
+        writeCommandArduino(testCommands[commandCounter]);
+        //check pen
+        int search_length = strlen(PEN_COMMAND);
+        int input_length = strlen(testCommands[commandCounter]);
+        for (int i = 0; i < input_length - search_length; i++) {
+            bool match = true;
+            for (int j = 0; j < search_length && match; j++) {
+                if (testCommands[commandCounter][i + j] != PEN_COMMAND[j]) {
+                    match = false;
+                }
+            }
+            if (match) {
+                penState=0;
+            }
+            else{
+                penState=1;
+            }
+        }
+        String confirm="";
+        while(confirm==CONFIRM_COMMAND){
+            confirm=readArduino();
+        }
+        confirmed=1;
         if(penState==2){
             espState=1;
         }
@@ -366,20 +391,36 @@ void loop(){
         }
     }
     else if(espState==3){
-        if(excecuted==1){
+        String execute="";
+        while(!execute){
+            String execute1="";
+            if(readArduino()==EXECUTED_COMMAND) executed=1;
+        }
+        if(executed == 1){
             commandCounter++;
             espState=1;
         }
     }
     else if(espState==4){
-        if(excecuted==1){
-            commandCounter++;
-            espState=1;
+        while(!executed||lineDetectionTimeout<MAX_TIMEOUT){
+            if(lineDetected()==0){
+                lineDetectionTimeout++;
+            }
+            else{
+                lineDetectionTimeout=0;
+            }
+            String execute1="";
+           if(readArduino()==EXECUTED_COMMAND) executed=1;
         }
-        else if(lineDetectionTimeout>=MAX_TIMEOUT){
+        if(lineDetectionTimeout>=MAX_TIMEOUT){
             espState=5;
             lineDetectionTimeout=0;
             start=0;
+        }
+        else if(executed == 1){
+            commandCounter++;
+            espState=1;
+            executed=0;
         }
     }
     else if(espState==5){
@@ -405,49 +446,19 @@ void loop(){
             digitalWrite(LED_GREEN,HIGH);
             digitalWrite(LED_RED,LOW);
             digitalWrite(LED_BLUE,HIGH);
-            //Confirm
-            //Handling the commands for the arduino
-            writeCommandArduino(testCommands[commandCounter]);
-            //check pen
-            int search_length = strlen(PEN_COMMAND);
-            int input_length = strlen(testCommands[commandCounter]);
-            for (int i = 0; i < input_length - search_length; i++) {
-                bool match = true;
-                for (int j = 0; j < search_length && match; j++) {
-                    if (testCommands[commandCounter][i + j] != PEN_COMMAND[j]) {
-                        match = false;
-                    }
-                }
-                if (match) {
-                    penState=0;
-                }
-                else{
-                    penState=1;
-                }
-            }
-            String confirm="";
-            while(confirm==CONFIRM_COMMAND){
-                confirm=readArduino();
-            }
-            confirmed=1;
+
             break;
         case 3:
             digitalWrite(LED_GREEN,LOW);
             digitalWrite(LED_RED,LOW);
             digitalWrite(LED_BLUE,HIGH);
-            String execute="";
-            while(execute==EXECUTED_COMMAND){
-                execute=readArduino();
-            }
+
             break;
         case 4:
             digitalWrite(LED_GREEN,LOW);
             digitalWrite(LED_RED,LOW);
             digitalWrite(LED_BLUE,HIGH);
-            String execute1="";
-            while(execute1==EXECUTED_COMMAND){
-                execute1=readArduino();
-            }
+
             break;
         case 5:
             digitalWrite(LED_GREEN,LOW);
