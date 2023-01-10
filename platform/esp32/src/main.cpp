@@ -190,7 +190,7 @@ void writeCommandArduino(String command){
     uartArduino.print(uartEndSymbol);
     //waiting for the message to be sent
     uartArduino.flush();
-    debugPrintln(command);
+    //debugPrintln(command);
 }
 
 String readArduino(){
@@ -261,15 +261,6 @@ void functionToExecuteEverySecond() {
     State_Method();
 }
 
-
-
-
-
-
-
-
-
-
 void loop(){
 /*
   if (currentSwitchStateStart != previousSwitchStateStart || currentSwitchStateProgram != previousSwitchStateProgram) {
@@ -295,7 +286,8 @@ void loop(){
         debugPrintln(testCommands[i]);
         while(!confirmed){
             String confirm="";
-            if(readArduino()=="confirm") confirmed=1;
+            confirm=readArduino();
+            if(confirm=="confirm") confirmed=1;
         }
         //debugPrintln(confirm);
     }
