@@ -10,9 +10,7 @@ main programm */
 #define LED_RED   19 // Set the pin and variable name for the Red status LED
 #define LED_GREEN 18 // Set the pin and variable name for the Green status LED
 #define LED_BLUE  5 // Set the pin and variable name for the Blue status LED
-
-#define SWITCH_INPUT_Start 26 // Set the input pin of the plotter start switch
-#define SWITCH_INPUT_Program 27 // Set the input pin of the program start switch
+#define SWITCH_INPUT_Program 12 // Set the input pin of the program start switch
 const char uartEndSymbol='~';
 const char* PEN_COMMAND= "move_pen_abs(";
 const String CONFIRM_COMMAND="confimed";
@@ -23,7 +21,7 @@ const char* ssidAP = "wallplotter";
 const char* passwordAP = "trinat2020";
 // These constants won't change. They're used to give names to the pins used:
 const int numberOfSensors=10;
-const int myPins[] = {0,2 ,4,12,14, 15,26, 27,32,33};
+const int myPins[] = {0,2 ,4,14, 15,25,26, 27,32,33};
 const int differenceLineValue=104;
 int counter=0;
 int lastSensorValues[]={0, 0, 0, 0,0,0,0,0,0,0};
@@ -102,7 +100,7 @@ void setup(){
     previousMillis = millis();
 
 // Setting Up Access Point
-    Serial.print("Setting AP (Access Point)…");
+    Serial.println("Setting AP (Access Point)…");
 // Remove the password parameter, if you want the AP (Access Point) to be open , password
 /*WiFi.softAP(ssidAP);
 IPAddress IP = WiFi.softAPIP();
@@ -340,6 +338,15 @@ void functionToExecuteEverySecond() {
     State_Method();
 }
 
+
+
+
+
+
+
+
+
+
 void loop(){
     if(espState==0){
         if(start==1){
@@ -358,6 +365,7 @@ void loop(){
         //Confirm
         //Handling the commands for the arduino
         writeCommandArduino(testCommands[commandCounter]);
+        debugPrintln(testCommands[commandCounter])
         //check pen
         int search_length = strlen(PEN_COMMAND);
         int input_length = strlen(testCommands[commandCounter]);
@@ -376,7 +384,7 @@ void loop(){
             }
         }
         String confirm="";
-        while(confirm==CONFIRM_COMMAND){
+        while(confirm!=CONFIRM_COMMAND){
             confirm=readArduino();
         }
         confirmed=1;
@@ -391,10 +399,10 @@ void loop(){
         }
     }
     else if(espState==3){
-        String execute="";
-        while(!execute){
-            String execute1="";
-            if(readArduino()==EXECUTED_COMMAND) executed=1;
+        String execute1="";
+        while(!executed){
+            execute1=readArduino();
+            if(execute1==EXECUTED_COMMAND) executed=1;
         }
         if(executed == 1){
             commandCounter++;
@@ -402,15 +410,15 @@ void loop(){
         }
     }
     else if(espState==4){
-        while(!executed||lineDetectionTimeout<MAX_TIMEOUT){
+        while(!executed&lineDetectionTimeout<MAX_TIMEOUT){
             if(lineDetected()==0){
                 lineDetectionTimeout++;
             }
             else{
                 lineDetectionTimeout=0;
             }
-            String execute1="";
-           if(readArduino()==EXECUTED_COMMAND) executed=1;
+            String execute2="";
+           if(execute2==EXECUTED_COMMAND) executed=1;
         }
         if(lineDetectionTimeout>=MAX_TIMEOUT){
             espState=5;
