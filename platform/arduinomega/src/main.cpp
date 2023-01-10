@@ -13,7 +13,7 @@
 #define dirPin_a  5
 #define stepPin_a  2
 #define UART_ESP_TX 14
-#define UART_ESP_RX 15
+#define UART_ESP_RX 50
 //incremental counters for steps
 #define SIGNAL_X 31
 #define SIGNAL_Y 33
@@ -54,6 +54,8 @@ float stepper_speed, basic_speed;
 boolean pen_pos;  //false = pen at open position; true = pen at write position
 
 const char uartEndSymbol='~';
+const String CONFIRM_COMMAND="confirmed";
+const String EXECUTED_COMMAND="executed";
 
 String command="";
 
@@ -64,16 +66,37 @@ AccelStepper stepper_c(motorInterfaceType, stepPin_c, dirPin_c);
 //AccelStepper stepper_p(motorInterfaceType, stepPin_p, dirPin_p);
 
 
+void debugPrintln(String string){
+    Serial.println(string);
+}
 String readCommandEsp(){
     if (uartEsp.available() > 0) {
         String message=uartEsp.readStringUntil(uartEndSymbol);
-        return message;
         //Debug
-        //Serial.println(message);
+        debugPrintln(message);
+        return message;
     }
     else{
         return "";
     }
+}
+
+String readCommandEspBlocking(){
+    int counter=0;
+    while (uartEsp.available() == 0) {
+        if(counter==1000){
+            debugPrintln("No data in Stream");
+            counter=0;
+        }
+        delay(1);
+        counter++;
+    }
+    String message=uartEsp.readStringUntil(uartEndSymbol);
+    debugPrintln(message);
+    return message;
+
+
+
 }
 void writeEsp(String message){
     uartEsp.print(message);
@@ -651,7 +674,7 @@ String read_until (char char_stop){
     int index =command.indexOf(char_stop);
     if (index != -1) {
         //returns a Part of a string
-        return command.substring(0, index);
+        return command.substring(0, index+1);
     }
     else Serial.println("No such Character found: "+char_stop);
 }
@@ -666,7 +689,6 @@ void setup()
     uartEsp.begin(9600);
     digitalWrite(LED_BUILTIN,HIGH);
     pen_servo.attach(A9); //servos do not use reguar PWM and can be used with analog pins thanks to the servo.h library
-
 
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(SIGNAL_X, INPUT);
@@ -743,7 +765,8 @@ void loop() {
 
     // Reading the Uart commands
     String draw_command, string_result;
-    command=readCommandEsp();
+    command=readCommandEspBlocking();
+    debugPrintln(command);
 
 
     // variables for draw
@@ -751,6 +774,8 @@ void loop() {
 
     while(1){
         draw_command = read_until('(');
+        writeEsp(CONFIRM_COMMAND);
+        debugPrintln(CONFIRM_COMMAND);
 
         if (draw_command == "move_pen_abs("){
             string_result = read_until(',');  //continue reading file unit character ','
@@ -766,7 +791,7 @@ void loop() {
             //Serial.println(y1);
         }
 
-        if (draw_command == "draw_curve("){
+        else if (draw_command == "draw_curve("){
             string_result = read_until(',');  //continue reading file unit character ','
             string_result = string_result.substring(0,string_result.length()-1);  //will delete last character, it is ','
             x1 = string_result.toFloat();
@@ -810,7 +835,7 @@ void loop() {
             */
         }
 
-        if (draw_command == "draw_line("){
+        else if (draw_command == "draw_line("){
             string_result = read_until(',');  //continue reading file unit character ','
             string_result = string_result.substring(0,string_result.length()-1);  //will delete last character, it is ','
             x1 = string_result.toFloat();
@@ -833,7 +858,7 @@ void loop() {
             //Serial.println(y2);
         }
 
-        if (draw_command == "move_pen_rel("){
+        else if (draw_command == "move_pen_rel("){
             string_result = read_until(',');  //continue reading file unit character ','
             string_result = string_result.substring(0,string_result.length()-1);  //will delete last character, it is ','
             x1 = string_result.toFloat();
@@ -847,9 +872,14 @@ void loop() {
             //Serial.println(y1);
         }
 
-        if (draw_command == "endfile(")  break;
-        writeEsp("confirmed");
-        command=readCommandEsp();
+        else if (draw_command == "endfile(")  break;
+        else{
+            debugPrintln("Error no valid Command received");
+            debugPrintln(draw_command);
+        }
+        writeEsp(EXECUTED_COMMAND);
+        debugPrintln(EXECUTED_COMMAND);
+        command=readCommandEspBlocking();
     }
 
     return_home();
