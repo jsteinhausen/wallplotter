@@ -375,13 +375,17 @@ void loop(){
         else if(penState==1){
             espState=4;
         }
+        Serial.println("State :"+espState);
     }
     else if(espState==3){
-        String execute1="";
-        while(!executed){
-            execute1=readArduino();
-            if(execute1==EXECUTED_COMMAND) executed=1;
-            Serial.println(executed);
+        if (confirmed) {
+            String execute1 = "";
+            while (!executed) {
+                execute1 = readArduino();
+                if (execute1 == EXECUTED_COMMAND) executed = 1;
+                Serial.println(executed);
+            }
+            confirmed=0;
         }
         if(executed == 1){
             commandCounter++;
