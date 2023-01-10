@@ -11,6 +11,7 @@ main programm */
 #define LED_GREEN 18 // Set the pin and variable name for the Green status LED
 #define LED_BLUE  5 // Set the pin and variable name for the Blue status LED
 #define SWITCH_INPUT_Program 12 // Set the input pin of the program start switch
+
 const char uartEndSymbol='~';
 const char* PEN_COMMAND= "move_pen_abs(";
 const String CONFIRM_COMMAND="confimed";
@@ -34,16 +35,14 @@ bool ledState = 0;
 bool start=0;
 bool executed=0;
 bool confirmed=0;
+bool previousSwitchStateProgram=0; // Declare a variable to track the previous state of the program start switch
+bool currentSwitchStateProgram=0; // Declare a variable to track the actual state of the programm start switch
 //State pen 0=up 1=down 2=movement
 int penState=0;
 int espState=0;
 int commandCounter=0;
 int lineDetectionTimeout=0;
 int const MAX_TIMEOUT=100;
-int previousSwitchStateStart = LOW; // Declare a variable to track the previous state of the plotter start switch
-int previousSwitchStateProgram = LOW; // Declare a variable to track the previous state of the program start switch
-int currentSwitchStateStart; // Declare a variable to track the actual state of the plotter start switch
-int currentSwitchStateProgram; // Declare a variable to track the actual state of the programm start switch
 int previousMillis;
 int commandLength=7;
 double servo_angle = 90; // Declare a variable for the setting of the servos angle
@@ -70,26 +69,22 @@ void initLineDetection(){
         lastSensorValues[i]= readQD(myPins[i]);
     }
 }
-
+void startStopHandler(){
+    start=!start;
+}
 
 void setup(){
 //initialize last sensor values as a Reference
     initLineDetection();
 // initialization of the hardware and the parameters of the ESP32 board
 //monServo.attach(A9); // connect the servo to the analog pin number 9
-    pinMode(SWITCH_INPUT_Start, INPUT);// Initialize the input port for the plotter start switch state
     pinMode(SWITCH_INPUT_Program, INPUT);// Initialize the input port for the program start switch state
+    attachInterrupt(SWITCH_INPUT_Program,startStopHandler,RISING);
 
 // Initialize the pins of the output RGB LED
     pinMode(LED_RED, OUTPUT);
     pinMode(LED_GREEN, OUTPUT);
     pinMode(LED_BLUE, OUTPUT);
-
-//Timer1.initialize(1000);  // initialize timer 1 and 2 with a period of 1 second
-//Timer2.initialize(1000);
-//Timer1.attachInterrupt(State_Method); // attach State_Method et get_Switches_States to the respective interrupt of timers 1 and 2
-//Timer2.attachInterrupt(get_Switches_States);
-
     Serial.begin(9600);
 // Initialize the tact rate for UART communication
     uartArduino.begin(9600);
@@ -223,11 +218,9 @@ int lineDetected(){
 
 void get_Switches_States(){
 
-  //noInterrupts(); // Block the interrupt to allow the copy in the variables
-  currentSwitchStateStart = digitalRead(SWITCH_INPUT_Start); // read the state of the plotter start switch
-  //currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
-  //interrupts(); // restart interrupts
-  previousSwitchStateStart = currentSwitchStateStart;// Update the previous state variable of the plotter start switch
+  noInterrupts(); // Block the interrupt to allow the copy in the variables
+  currentSwitchStateProgram = digitalRead(SWITCH_INPUT_Program); //read the state of the program start switch
+  interrupts(); // restart interrupts
   previousSwitchStateProgram = currentSwitchStateProgram;// Update the previous state variable of the program start switch
 }
 
@@ -331,21 +324,6 @@ void Start_Method() {
     // Insert here the code to execute when the method is started
     Return_Home_UART();
 }
-void functionToExecuteEverySecond() {
-
-    // Code à exécuter toutes les secondes
-    get_Switches_States();
-    State_Method();
-}
-
-
-
-
-
-
-
-
-
 
 void loop(){
     if(espState==0){
@@ -365,7 +343,7 @@ void loop(){
         //Confirm
         //Handling the commands for the arduino
         writeCommandArduino(testCommands[commandCounter]);
-        debugPrintln(testCommands[commandCounter])
+        debugPrintln(testCommands[commandCounter]);
         //check pen
         int search_length = strlen(PEN_COMMAND);
         int input_length = strlen(testCommands[commandCounter]);
@@ -403,6 +381,7 @@ void loop(){
         while(!executed){
             execute1=readArduino();
             if(execute1==EXECUTED_COMMAND) executed=1;
+            Serial.println(executed);
         }
         if(executed == 1){
             commandCounter++;
@@ -439,6 +418,8 @@ void loop(){
     else{
         espState=5;
     }
+    debugPrintln("State: ");
+    Serial.println(espState);
     switch (espState) {
         case 0:
             digitalWrite(LED_GREEN,HIGH);
