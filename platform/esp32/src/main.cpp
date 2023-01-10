@@ -7,9 +7,9 @@ main programm */
 
 #define UART_ESP_TX 17
 #define UART_ESP_RX 16
-#define LED_RED   23 // Set the pin and variable name for the Red status LED
-#define LED_GREEN 24 // Set the pin and variable name for the Green status LED
-#define LED_BLUE  25 // Set the pin and variable name for the Blue status LED
+#define LED_RED   19 // Set the pin and variable name for the Red status LED
+#define LED_GREEN 18 // Set the pin and variable name for the Green status LED
+#define LED_BLUE  5 // Set the pin and variable name for the Blue status LED
 
 #define SWITCH_INPUT_Start 26 // Set the input pin of the plotter start switch
 #define SWITCH_INPUT_Program 27 // Set the input pin of the program start switch
