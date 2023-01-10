@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="92856579-5793-45bb-a67f-10aa2b322496" name="Changes" comment="initLinedetection added">
+      <change beforePath="$PROJECT_DIR$/../esp32/.idea/esp32.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../esp32/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../esp32/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../esp32/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../esp32/src/main.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="js_esp32-10sensors-line" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92856579-5793-45bb-a67f-10aa2b322496" name="Changes" comment="" />
+      <created>1672998397062</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1672998397062</updated>
+      <workItem from="1672998399231" duration="1548000" />
+      <workItem from="1673004506917" duration="1299000" />
+      <workItem from="1673018478439" duration="261000" />
+      <workItem from="1673019102593" duration="1106000" />
+      <workItem from="1673100366255" duration="3956000" />
+      <workItem from="1673186351475" duration="76000" />
+      <workItem from="1673186660016" duration="1562000" />
+      <workItem from="1673195099418" duration="1281000" />
+      <workItem from="1673196618173" duration="8155000" />
+    </task>
+    <task id="LOCAL-00001" summary="Fumik code implemented+dependencies added code compiles">
+      <created>1673206883704</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1673206883704</updated>
+    </task>
+    <task id="LOCAL-00002" summary="initLinedetection added">
+      <created>1673264701385</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1673264701385</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="HEAD" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fumik code implemented+dependencies added code compiles" />
+    <MESSAGE value="initLinedetection added" />
+    <option name="LAST_COMMIT_MESSAGE" value="initLinedetection added" />
+  </component>
+</project>
