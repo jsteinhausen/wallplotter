@@ -200,10 +200,11 @@ String readArduino(){
             debugPrintln("No data in Stream");
             counter=0;
         }
-        delay(1);
+        //delay(1);
         counter++;
     }
-    String message=uartArduino.readStringUntil(uartEndSymbol);
+    String message="";
+    message=uartArduino.readStringUntil(uartEndSymbol);
     debugPrintln(message);
     return message;
 }
@@ -281,15 +282,16 @@ void loop(){
     //testUart();
     //Handling the commands for the arduino
     bool confirmed=0;
-    for(int i;i<commandLength;i++){
-        writeCommandArduino(testCommands[i]);
-        debugPrintln(testCommands[i]);
+    //for(int i;i<commandLength;i++){
+        writeCommandArduino(testCommands[0]);
+        debugPrintln(testCommands[0]);
         while(!confirmed){
             String confirm="";
             confirm=readArduino();
             if(confirm=="confirm") confirmed=1;
+            debugPrintln(confirm);
         }
-        //debugPrintln(confirm);
-    }
+
+    //}
 
 }
