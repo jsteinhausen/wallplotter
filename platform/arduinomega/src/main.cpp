@@ -77,8 +77,9 @@ void setup()
 }
 void loop() {
     //testUart();
-    String command=readCommandEsp();
-    debugPrintln(command);
+    String command="";
+    command=readCommandEsp();
+    //debugPrintln(command);
     writeEsp(CONFIRM);
     debugPrintln(CONFIRM);
     //delay(1000);
