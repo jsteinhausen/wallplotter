@@ -293,7 +293,7 @@ void loop(){
         while(confirm!="confirmed"){
             confirm=readArduino();
         }
-        debugPrintln(confirm);
+        //debugPrintln(confirm);
     }
 
 }
